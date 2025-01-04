@@ -17,6 +17,7 @@ import Dash from "./PagesAdmin/DashAdmin/Dash";
 import AdcionaisPage from "./Pages/Adicionais/View/AdicionaisPage";
 import MesaAdminPage from "./PagesAdmin/MesaAdmin/View/MesaAdminPageView";
 import CadastrarMesa from "./PagesAdmin/MesaAdmin/View/CadastrarMesaView";
+import FinalizacaoPage from "./Pages/Home/View/FinalizacaoPage";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path="/Preferencias" element={<Preferencias />} />
         <Route path="/Preferencias/Sabores" element={<SaboresPage />} />
         <Route path="/Preferencias/Adicionais" element={<AdcionaisPage />} />
+        <Route path="/Preferencias/Finalizacao" element={<FinalizacaoPage/>}/>
 
         {/* Rotas do Admin */}
         <Route path="/admin" element={<LoginAdminPage />} />
