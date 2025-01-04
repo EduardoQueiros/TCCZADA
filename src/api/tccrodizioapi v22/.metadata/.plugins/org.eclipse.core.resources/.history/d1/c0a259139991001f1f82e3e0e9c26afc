@@ -1,0 +1,41 @@
+package com.tcc.utils;
+
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Base64;
+
+import javax.imageio.ImageIO;
+
+public class Base64Utils {
+
+    // Converte de byte[] para Base64
+    public static String encodeToBase64(byte[] data) {
+        return Base64.getEncoder().encodeToString(data);
+    }
+
+    // Converte de Base64 para byte[]
+    public static byte[] decodeFromBase64(String base64String) {
+        return Base64.getDecoder().decode(base64String);
+    }
+
+    // Método para comprimir imagem
+    public static byte[] compressImage(byte[] imageData, float quality) throws IOException {
+        ByteArrayInputStream bais = new ByteArrayInputStream(imageData);
+        BufferedImage originalImage = ImageIO.read(bais);
+
+        // Cria um novo BufferedImage para a imagem comprimida
+        BufferedImage compressedImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = compressedImage.createGraphics();
+        g2d.drawImage(originalImage, 0, 0, null);
+        g2d.dispose();
+
+        // Escreve a imagem comprimida em um ByteArrayOutputStream
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(compressedImage, "jpg", baos); // Usa JPEG para compressão
+
+        return baos.toByteArray();
+    }
+}
