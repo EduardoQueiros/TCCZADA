@@ -39,6 +39,7 @@ List<ClientePreferencia> findAllWithAdicionaisByClienteId(@Param("clienteId") In
        "FROM cliente_preferencias cp " +
        "JOIN cp.produto p " +
        "WHERE cp.status = 1 " +
+       "AND cp.produto.tipoProduto.id <> 6" +
        "GROUP BY p.id " +
        "ORDER BY pedidos DESC")
 List<Object[]> findProductsOrderedByPopularityWithStatus();
