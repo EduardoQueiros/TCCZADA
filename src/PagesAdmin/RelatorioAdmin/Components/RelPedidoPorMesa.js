@@ -1,84 +1,86 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
+import React, { useState } from "react";
 
-function RelPedidoPorMesa({ startDate, endDate }) {
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [itemPedidos, setItemPedidos] = useState([]);
+function RelPedidoPorMesa({ pedidosFiltrados, isLoading, error }) {
+  const [expandedMesa, setExpandedMesa] = useState(null);
 
-    useEffect(() => {
-        const fetchItemPedidos = async () => {
-            try {
-                const response = await axios.get("http://localhost:9091/api/v1/item-pedido");
-                setItemPedidos(response.data);
-            } catch (err) {
-                setError(err);
-                console.error("Erro ao carregar pedidos:", err);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchItemPedidos();
-    }, []);
+  if (isLoading) return <div>Carregando...</div>;
+  if (error) return <div>Erro ao carregar dados.</div>;
 
-    if (isLoading) return <div>Loading...</div>;
-    if (error) return <div>Error loading pedidos</div>;
+  const toggleExpand = (mesaId) => {
+    setExpandedMesa((prev) => (prev === mesaId ? null : mesaId));
+  };
 
-    // Filtrando pedidos pela dataHoraAbertura e dataHoraFechamento
-    const filteredPedidos = itemPedidos.filter(itemPedido => {
-        const aberturaTimestamp = itemPedido.dataHoraAbertura; // Presumindo que é um timestamp
-        const fechamentoTimestamp = itemPedido.dataHoraFechamento; // Presumindo que é um timestamp
+  return (
+    <div className="p-4">
+      {pedidosFiltrados.map((pedido, index) => (
+        <div
+          key={index}
+          className="bg-gray-100 mt-4 mx-4 rounded-lg shadow-md p-4 transition duration-300 hover:shadow-lg"
+        >
+          {/* Cabeçalho da Mesa */}
+          <div
+            className="flex justify-between items-center cursor-pointer"
+            onClick={() => toggleExpand(pedido.mesaId)}
+          >
+            <h1 className="text-xl font-semibold text-blue-600">
+              Mesa {pedido.mesaId}
+            </h1>
+            <div className="flex flex-col sm:flex-row sm:gap-4">
+              <p className="text-gray-700">
+                Total de Pedidos:{" "}
+                <strong className="text-blue-600">{pedido.totalPedidos}</strong>
+              </p>
+              <p className="text-gray-700">
+                Total de Produtos:{" "}
+                <strong className="text-blue-600">{pedido.totalProdutos}</strong>
+              </p>
+            </div>
+          </div>
 
-        const start = startDate ? new Date(startDate).getTime() : null; // Convertendo para timestamp
-        const end = endDate ? new Date(endDate).getTime() : null; // Convertendo para timestamp
+          {/* Detalhes Expansíveis */}
+          {expandedMesa === pedido.mesaId && (
+            <div className="mt-4 bg-white p-4 rounded-md shadow-inner">
+              {pedido.pedidos.map((detalhe, pedidoIndex) => (
+                <div
+                  key={pedidoIndex}
+                  className="border-t border-gray-300 pt-2 mt-2 text-sm"
+                >
+                  <p>
+                    <strong>ID do Pedido:</strong> {detalhe.pedido.id}
+                  </p>
+                  <p>
+                    <strong>Total de Produtos:</strong>{" "}
+                    {detalhe.totalProdutos}
+                  </p>
+                  <p>
+                    <strong>Valor Total:</strong> R${" "}
+                    {detalhe.pedido.totalPedido.toFixed(2)}
+                  </p>
+                  <p>
+                    <strong>Data de Fechamento:</strong>{" "}
+                    {detalhe.pedido.dataHoraFechamento}
+                  </p>
 
-        const withinStartDate = !start || aberturaTimestamp >= start;
-        const withinEndDate = !end || fechamentoTimestamp <= end;
-
-        return withinStartDate && withinEndDate;
-    });
-
-    // Agrupando pedidos por mesa_id
-    const groupedPedidos = filteredPedidos.reduce((acc, itemPedido) => {
-        const mesaId = itemPedido.mesa.id; // Usando mesa.id para agrupar
-        const clienteId = itemPedido.cliente_id; // Captura o cliente ID
-
-        if (!acc[mesaId]) {
-            acc[mesaId] = {
-                mesaId,
-                totalPedidos: 0,
-                clientes: [], // Lista para todos os clientes
-            };
-        }
-
-        // Incrementa o total de pedidos para a mesa
-        acc[mesaId].totalPedidos += 1;
-
-        // Adiciona o cliente à lista
-        acc[mesaId].clientes.push(clienteId);
-
-        return acc;
-    }, {});
-
-    // Calculando os dados finais
-    const pedidosFiltrados = Object.values(groupedPedidos).map(pedido => ({
-        mesaId: pedido.mesaId,
-        totalClientes: pedido.clientes.length, // Total de clientes (sem unicidade)
-        totalPedidos: pedido.totalPedidos,
-        listaClientes: pedido.clientes // Mantém a lista de todos os clientes
-    }));
-
-    return (
-        <div>
-            {pedidosFiltrados.map((pedido, index) => (
-                <div key={index} className="bg-gray-200 mt-4 ml-3 mr-3 rounded-lg p-3">
-                    <h1 className="text-3xl ml-3">Mesa {pedido.mesaId}</h1>
-                    <p className="ml-3">Total de Clientes da Mesa: {pedido.totalClientes}</p>
-                    <p className="ml-3">Total de Pedidos: {pedido.totalPedidos}</p>
+                  {/* Agrupamento de Produtos */}
+                  <div className="mt-2">
+                    <strong>Produtos:</strong>
+                    <ul className="list-disc ml-6">
+                      {detalhe.produtosAgrupados.map((produto, pIndex) => (
+                        <li key={pIndex} className="text-gray-700">
+                          {produto.descricao} -{" "}
+                          <strong>{produto.quantidade}</strong> unidades
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
-            ))}
+              ))}
+            </div>
+          )}
         </div>
-    );
+      ))}
+    </div>
+  );
 }
 
 export default RelPedidoPorMesa;

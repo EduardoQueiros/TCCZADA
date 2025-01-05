@@ -12,7 +12,7 @@ import CadastroCategoria from "./PagesAdmin/CategoriaAdmin/View/CadastroCategori
 import ProdutoAdminPage from "./PagesAdmin/ProdutoAdmin/View/ProdutoAdminPageView";
 import CadastrarProduto from "./PagesAdmin/ProdutoAdmin/View/CadastrarProdutoView";
 import EditarProduto from "./PagesAdmin/ProdutoAdmin/View/EditarProdutoView";
-import RelatorioAdminPage from "./PagesAdmin/RelatorioAdmin/RelatorioAdminPage";
+import RelatorioAdminPage from "./PagesAdmin/RelatorioAdmin/View/RelatorioAdminPage";
 import Dash from "./PagesAdmin/DashAdmin/Dash";
 import AdcionaisPage from "./Pages/Adicionais/View/AdicionaisPage";
 import MesaAdminPage from "./PagesAdmin/MesaAdmin/View/MesaAdminPageView";
