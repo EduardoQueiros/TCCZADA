@@ -16,6 +16,23 @@ function SaborBoxController(searchTerm) {
     return userLogin?.clienteId || null;
   };
 
+  // Busca os produtos já adicionados com status "RECEBIDO"
+  const fetchProdutosJaAdicionados = async (clienteId) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:9091/api/v1/cliente-preferencia/criteria",
+        {
+          status: "RECEBIDO",
+          cliente: { id: clienteId },
+        }
+      );
+      return response.data.map((item) => item.produto.id);
+    } catch (err) {
+      console.error("Erro ao buscar produtos adicionados:", err);
+      return [];
+    }
+  };
+
   // Adiciona o produto ao modelo e realiza o POST
   const adicionarProduto = async (produto) => {
     try {
@@ -42,9 +59,6 @@ function SaborBoxController(searchTerm) {
 
       console.log("Produto adicionado com sucesso!");
 
-      // Adiciona o produto ao modelo
-      ItemBoxModelProduto.addProduto(produto);
-
       // Remove o produto da lista de filtrados
       setFilteredProdutos((prevFiltrados) =>
         prevFiltrados.filter((filtrado) => filtrado.id !== produto.id)
@@ -63,20 +77,26 @@ function SaborBoxController(searchTerm) {
     const fetchProdutos = async () => {
       setIsLoading(true);
       try {
+        const clienteId = getClienteId();
+
+        if (!clienteId) {
+          throw new Error("ID do cliente não encontrado. Realize o login novamente.");
+        }
+
+        // Busca produtos já adicionados
+        const produtosJaAdicionadosIds = await fetchProdutosJaAdicionados(clienteId);
+
+        // Busca todos os produtos
         const response = await axios.get("http://localhost:9091/api/v1/produto");
+
         const produtosFiltrados = response.data.filter(
-          (produto) => produto.tipoProduto.descricao.toLowerCase() !== "adicionais"
-        );
-
-        // Remove produtos duplicados ao inicializar
-        const produtosAdicionados = await ItemBoxModelProduto.getProdutos();
-        const produtosSemDuplicados = produtosFiltrados.filter(
           (produto) =>
-            !produtosAdicionados.some((adicionado) => adicionado.id === produto.id)
+            produto.tipoProduto.descricao.toLowerCase() !== "adicionais" &&
+            !produtosJaAdicionadosIds.includes(produto.id)
         );
 
-        setProdutos(produtosSemDuplicados);
-        setFilteredProdutos(produtosSemDuplicados);
+        setProdutos(produtosFiltrados);
+        setFilteredProdutos(produtosFiltrados);
       } catch (err) {
         setError(err);
         console.error(err);

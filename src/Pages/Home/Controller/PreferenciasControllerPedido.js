@@ -3,7 +3,7 @@ import axios from "axios";
 import { formatDateTime } from "../../../Components/DateUtils";
 
 const PreferenciasControllerPedido = {
-  handleEstouSatisfeito: async (clienteId, itens) => {
+  handleEstouSatisfeito: async (clienteId) => {
     try {
       console.log("Início do fluxo 'Estou Satisfeito'");
       if (!clienteId) throw new Error("ID do cliente não encontrado.");
@@ -34,8 +34,22 @@ const PreferenciasControllerPedido = {
       const pedido = pedidos[0]; // Considera o primeiro pedido retornado
       console.log(`Pedido recuperado com ID: ${pedido.id}`);
 
+      // **Busca todos os itens do cliente em cliente-preferencia**
+      const clientePreferenciaPayload = { cliente: { id: clienteId } };
+      console.log("Buscando itens do cliente em cliente-preferencia...");
+      const clientePreferencias = await axios.post(
+        "http://localhost:9091/api/v1/cliente-preferencia/criteria",
+        clientePreferenciaPayload
+      );
+
+      const itens = clientePreferencias.data;
+      if (!itens || itens.length === 0) {
+        throw new Error("Nenhum item encontrado em cliente-preferencia para o cliente.");
+      }
+
+      // Prepara o payload para adicionar todos os itens à tabela item-pedido
       const itensPayload = itens.map((item) => ({
-        qtdProduto: 1,
+        qtdProduto: 1, // Ajuste conforme necessário
         cliente: { id: clienteId },
         mesa: { id: item.cliente.mesa.id },
         produto: { id: item.produto.id },
