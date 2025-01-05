@@ -5,7 +5,7 @@ const ProtectedRoute = ({ children }) => {
   const userLogin = localStorage.getItem("userLogin");
 
   if (!userLogin) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/" />;
   }
 
   return children;

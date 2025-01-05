@@ -1,4 +1,5 @@
 import PedidoModel from "../Model/PedidoModel";
+import axios from "axios";
 import { formatDateTime } from "../../../Components/DateUtils";
 
 const PreferenciasControllerPedido = {
@@ -47,10 +48,27 @@ const PreferenciasControllerPedido = {
       await PedidoModel.adicionarItensAoPedido(itensPayload);
       console.log("Itens adicionados ao pedido com sucesso!");
 
-      return { success: true, message: "Pedido finalizado com sucesso!" };
+      // Atualizar status dos itens em cliente-preferencia
+      console.log("Atualizando status dos itens em cliente-preferencia...");
+      const updatePromises = itens.map((item) => {
+        const updatePayload = {
+          id: item.id, // ID do registro de cliente-preferencia
+          status: "EM_ABERTO",
+          cliente: { id: clienteId },
+          produto: { id: item.produto.id },
+        };
+
+        console.log("Payload do PUT para cliente-preferencia:", JSON.stringify(updatePayload, null, 2));
+        return axios.put("http://localhost:9091/api/v1/cliente-preferencia", updatePayload);
+      });
+
+      await Promise.all(updatePromises);
+      console.log("Status dos itens atualizado com sucesso!");
+
+      return { success: true, message: "Pedido finalizado e status atualizado com sucesso!" };
     } catch (err) {
       console.error("Erro no fluxo 'Estou Satisfeito':", err.response?.data || err.message || err);
-      throw new Error(err.response?.data?.mensagem || "Erro ao finalizar o pedido.");
+      throw new Error(err.response?.data?.mensagem || "Erro ao finalizar o pedido e atualizar os itens.");
     }
   },
 };

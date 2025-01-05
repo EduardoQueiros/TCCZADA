@@ -26,12 +26,12 @@ public interface ClientePreferenciaRepository extends JpaRepository<ClientePrefe
 
 @EntityGraph(attributePaths = {"cliente", "cliente.mesa", "produto", "produto.tipoProduto"})
 @Query("SELECT cp FROM cliente_preferencias cp " +
-       "WHERE cp.cliente.id = :clienteId AND cp.produto.tipoProduto.id <> 6")
+       "WHERE cp.cliente.id = :clienteId AND cp.produto.tipoProduto.id <> 6 AND cp.status = 1 ")
 List<ClientePreferencia> findAllWithoutAdicionaisByClienteId(@Param("clienteId") Integer clienteId);
 
 @EntityGraph(attributePaths = {"cliente", "cliente.mesa", "produto", "produto.tipoProduto"})
 @Query("SELECT cp FROM cliente_preferencias cp " +
-       "WHERE cp.cliente.id = :clienteId AND cp.produto.tipoProduto.id = 6")
+       "WHERE cp.cliente.id = :clienteId AND cp.produto.tipoProduto.id = 6 AND cp.status = 1 ")
 List<ClientePreferencia> findAllWithAdicionaisByClienteId(@Param("clienteId") Integer clienteId);
 
 
