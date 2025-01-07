@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Swal from "sweetalert2";
 import { useParams, useNavigate } from "react-router-dom";
 import EditarProdutoController from "../Controller/EditarProdutoController";
 
@@ -14,7 +15,6 @@ function EditarProdutoView() {
   const [loadingSave, setLoadingSave] = useState(false);
   const [error, setError] = useState(null);
 
-  // Carrega dados do produto e categorias
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -36,10 +36,9 @@ function EditarProdutoView() {
     fetchData();
   }, [id]);
 
-  // Salva alterações do produto
   const handleSalvar = async () => {
     if (!descricao || !valor || !selectedCategory) {
-      alert("Preencha todos os campos obrigatórios.");
+      Swal.fire("Atenção", "Preencha todos os campos obrigatórios.", "warning");
       return;
     }
 
@@ -55,16 +54,16 @@ function EditarProdutoView() {
 
     try {
       await EditarProdutoController.atualizarProduto(produto);
-      alert("Produto atualizado com sucesso!");
-      navigate("/admin/home/produto");
+      Swal.fire("Sucesso", "Produto atualizado com sucesso!", "success").then(() =>
+        navigate("/admin/home/produto")
+      );
     } catch (err) {
-      alert(`Erro ao salvar produto: ${err.message}`);
+      Swal.fire("Erro", `Erro ao salvar produto: ${err.message}`, "error");
     } finally {
       setLoadingSave(false);
     }
   };
 
-  // Manipula a troca de imagem
   const handleImageChange = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -73,11 +72,10 @@ function EditarProdutoView() {
       const base64 = await EditarProdutoController.convertImageToBase64(file);
       setSelectedImage(base64);
     } catch (err) {
-      alert(err);
+      Swal.fire("Erro", "Erro ao carregar a imagem.", "error");
     }
   };
 
-  // Remove a imagem selecionada
   const handleRemoveImage = () => {
     setSelectedImage("");
   };
@@ -87,8 +85,8 @@ function EditarProdutoView() {
   }
 
   return (
-    <div className="bg-orange-200 min-h-screen flex flex-col items-center">
-      <h1 className="text-white font-bold text-4xl mt-8">Editar Produto</h1>
+    <div className="bg-blue-100 min-h-screen flex flex-col items-center">
+      <h1 className="text-blue-700 font-bold text-4xl mt-8">Editar Produto</h1>
       <div className="bg-white p-6 rounded-lg shadow-md w-11/12 max-w-2xl mt-6">
         <div className="flex flex-col items-center">
           <label className="cursor-pointer">
@@ -98,7 +96,7 @@ function EditarProdutoView() {
               className="hidden"
               onChange={handleImageChange}
             />
-            <div className="w-48 h-48 border-2 border-gray-300 border-dashed rounded-lg bg-gray-100 flex items-center justify-center">
+            <div className="w-48 h-48 border-2 border-blue-300 border-dashed rounded-lg bg-blue-50 flex items-center justify-center">
               {selectedImage ? (
                 <div className="relative w-full h-full">
                   <img
@@ -114,27 +112,27 @@ function EditarProdutoView() {
                   </button>
                 </div>
               ) : (
-                <span className="text-gray-400">Clique ou arraste uma imagem aqui</span>
+                <span className="text-blue-500">Clique ou arraste uma imagem aqui</span>
               )}
             </div>
           </label>
         </div>
         <div className="mt-6">
-          <label className="block text-gray-700 font-semibold mb-2">Nome do Produto</label>
+          <label className="block text-blue-700 font-semibold mb-2">Nome do Produto</label>
           <input
             type="text"
             placeholder="Digite o nome do produto"
             value={descricao}
             onChange={(e) => setDescricao(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full border border-blue-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
         <div className="mt-6">
-          <label className="block text-gray-700 font-semibold mb-2">Categoria</label>
+          <label className="block text-blue-700 font-semibold mb-2">Categoria</label>
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full border border-blue-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="" disabled>
               Selecione uma Categoria
@@ -147,20 +145,20 @@ function EditarProdutoView() {
           </select>
         </div>
         <div className="mt-6">
-          <label className="block text-gray-700 font-semibold mb-2">Valor do Produto (R$)</label>
+          <label className="block text-blue-700 font-semibold mb-2">Valor do Produto (R$)</label>
           <input
             type="number"
             placeholder="Digite o valor do produto"
             value={valor}
             onChange={(e) => setValor(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full border border-blue-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
         <div className="flex justify-end space-x-4 mt-8">
           <button
             onClick={handleSalvar}
             disabled={loadingSave}
-            className={`bg-blue-500 text-white font-bold py-2 px-6 rounded-lg shadow-md hover:bg-blue-600 transition-colors ${
+            className={`bg-blue-600 text-white font-bold py-2 px-6 rounded-lg shadow-md hover:bg-blue-700 transition-colors ${
               loadingSave ? "opacity-50 cursor-not-allowed" : ""
             }`}
           >

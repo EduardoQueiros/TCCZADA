@@ -1,4 +1,3 @@
-
 import ReturnButton from "../../../Components/ReturnButton";
 import Search from "../../../Components/Search";
 import AdicionalBox from "../Components/AdicionalBox";
@@ -12,9 +11,9 @@ function AdicionaisPage() {
   };
 
   return (
-    <div className="bg-orange-100 min-h-screen flex flex-col">
+    <div className="bg-gradient-to-b from-blue-50 to-white min-h-screen flex flex-col">
       {/* Cabeçalho */}
-      <header className="bg-gradient-to-r from-orange-500 to-orange-400 shadow-md sticky top-0 z-10">
+      <header className="bg-gradient-to-r from-blue-600 to-blue-400 shadow-md sticky top-0 z-20">
         <div className="flex items-center justify-between px-4 py-3">
           <ReturnButton linkPage={"/Preferencias"} />
           <h1 className="text-white font-bold text-2xl">Adicionais</h1>
@@ -22,17 +21,19 @@ function AdicionaisPage() {
         </div>
       </header>
 
-      {/* Conteúdo */}
-      <main className="flex-1 p-4">
-        {/* Barra de Pesquisa */}
-        <section className="flex justify-center mb-6">
+      {/* Barra de Pesquisa */}
+      <section className="sticky top-16 z-20 bg-white shadow-md p-4">
+        <div className="flex justify-center">
           <Search
             nome={"Pesquise seu Adicional!"}
             onSearch={handleSearch}
             className="w-full max-w-lg"
           />
-        </section>
+        </div>
+      </section>
 
+      {/* Conteúdo */}
+      <main className="flex-1 p-4">
         {/* Lista de Adicionais */}
         <section className="mt-4">
           <AdicionalBox searchTerm={searchTerm} />

@@ -1,4 +1,5 @@
 import axios from "axios";
+import Swal from "sweetalert2";
 
 function CheckBox({ categorias, onDelete }) {
   if (!categorias || categorias.length === 0) {
@@ -10,33 +11,39 @@ function CheckBox({ categorias, onDelete }) {
   }
 
   const handleDelete = async (id) => {
-    const confirm = window.confirm(`Tem certeza que deseja excluir a categoria com ID ${id}?`);
-    if (!confirm) return;
-
-    try {
-      // Envia o ID no corpo como uma lista
-      await axios.delete("http://localhost:9091/api/v1/tipo-produto", {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        data: [id], // Lista com o ID para exclusão
-      });
-
-      alert("Categoria excluída com sucesso!");
-      onDelete(id); // Atualiza o estado no componente pai
-    } catch (error) {
-      if (error.response && error.response.status === 400) {
-        // Erro de validação ao excluir (mensagem genérica ou personalizada do backend)
-        alert(error.response.data.message || "Erro ao excluir: categoria vinculada a produtos.");
-      } else if (error.response && error.response.status === 409) {
-        // Erro de conflito (caso o backend envie 409 para associações)
-        alert("Não é possível excluir esta categoria. Existem produtos vinculados.");
-      } else {
-        // Outros erros
-        console.error("Erro ao excluir a categoria:", error);
-        alert("Não foi possível excluir a categoria.");
+    Swal.fire({
+      title: "Tem certeza?",
+      text: `Você deseja excluir a categoria com ID ${id}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sim, excluir!",
+      cancelButtonText: "Cancelar",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axios.delete("http://localhost:9091/api/v1/tipo-produto", {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            data: [id],
+          });
+          Swal.fire("Excluído!", "A categoria foi excluída com sucesso.", "success");
+          onDelete(id);
+        } catch (error) {
+          if (error.response?.status === 400 || error.response?.status === 409) {
+            Swal.fire(
+              "Erro",
+              error.response.data.message || "Não é possível excluir a categoria vinculada a produtos.",
+              "error"
+            );
+          } else {
+            Swal.fire("Erro", "Erro ao excluir a categoria.", "error");
+          }
+        }
       }
-    }
+    });
   };
 
   return (
@@ -47,7 +54,7 @@ function CheckBox({ categorias, onDelete }) {
           key={categoria.id}
         >
           <div className="flex-grow">
-            <h2 className="text-lg font-semibold">
+            <h2 className="text-lg font-semibold text-blue-700">
               {categoria.descricao} [{categoria.id}]
             </h2>
           </div>

@@ -1,5 +1,4 @@
 import ProdutoModel from "../Model/ProdutoModel";
-import { formatarImagemBase64 } from "../../../utils/ImagemUtils";
 
 class ProdutoAdminPageController {
   /**
@@ -12,8 +11,6 @@ class ProdutoAdminPageController {
     setIsLoading(true);
     try {
       const produtos = await ProdutoModel.getAllProdutos();
-
-      // Certifique-se de passar os produtos diretamente
       setProdutos(produtos);
     } catch (err) {
       setError(`Erro ao buscar produtos: ${err.message}`);
@@ -21,7 +18,6 @@ class ProdutoAdminPageController {
       setIsLoading(false);
     }
   }
-
 
   /**
    * Filtra os produtos com base no termo de busca.
@@ -40,23 +36,19 @@ class ProdutoAdminPageController {
     setFilteredProdutos(filtered);
   }
 
-
-   /**
-   * Remove produtos pelo ID e atualiza a lista no estado.
-   * @param {Array<number>} ids - Lista de IDs dos produtos a serem removidos.
+  /**
+   * Remove um produto pelo ID e atualiza a lista no estado.
+   * @param {number} id - ID do produto a ser removido.
    * @param {Function} setProdutos - Atualiza a lista de produtos no estado.
    * @param {Function} setError - Registra qualquer erro que ocorra.
    */
-   static async removerProdutos(ids, setProdutos, setError) {
+  static async removerProduto(id, setProdutos, setError) {
     try {
-      await ProdutoModel.removerProdutos(ids); // Faz a exclusão no backend
-
-      // Atualiza a lista localmente após a exclusão
-      setProdutos((produtos) =>
-        produtos.filter((produto) => !ids.includes(produto.id))
-      );
+      await ProdutoModel.deleteProduto(id);
+      setProdutos((produtos) => produtos.filter((produto) => produto.id !== id));
     } catch (err) {
-      setError(`Erro ao remover os produtos: ${err.message}`);
+      setError(`Erro ao remover o produto: ${err.message}`);
+      throw err; // Propaga o erro para tratamento adicional
     }
   }
 }

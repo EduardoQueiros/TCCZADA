@@ -11,29 +11,25 @@ function SaboresPage() {
   };
 
   return (
-    <div className="bg-orange-100 min-h-screen flex flex-col">
-      {/* Cabeçalho */}
-      <header className="bg-gradient-to-r from-orange-500 to-orange-400 shadow-md sticky top-0 z-10">
-        <div className="flex items-center justify-between px-4 py-3">
+    <div className="bg-gradient-to-b from-blue-50 to-blue-100 min-h-screen flex flex-col">
+      {/* Cabeçalho fixo */}
+      <div className="sticky top-0 z-20 bg-blue-600 shadow-lg w-full">
+        <header className="flex items-center justify-between px-4 py-4 max-w-4xl mx-auto">
           <ReturnButton linkPage={"/Preferencias"} />
-          <h1 className="text-white font-bold text-2xl">Sabores</h1>
-          <div className="w-10"></div> {/* Placeholder para alinhamento */}
+          <h1 className="font-bold text-3xl text-white text-center flex-grow">
+            Sabores
+          </h1>
+        </header>
+        <div className="bg-white shadow-md">
+          <div className="px-4 py-4 max-w-4xl mx-auto">
+            <Search nome="Pesquise seu Sabor!" onSearch={handleSearch} />
+          </div>
         </div>
-      </header>
+      </div>
 
       {/* Conteúdo */}
-      <main className="flex-1 p-4">
-        {/* Barra de Pesquisa */}
-        <section className="flex justify-center mb-6">
-          <Search
-            nome={"Pesquise seu Sabor!"}
-            onSearch={handleSearch}
-            className="w-full max-w-lg"
-          />
-        </section>
-
-        {/* Lista de Sabores */}
-        <section className="mt-4">
+      <main className="flex-grow px-4 pb-16 w-full max-w-4xl mt-4">
+        <section>
           <SaborBox searchTerm={searchTerm} />
         </section>
       </main>

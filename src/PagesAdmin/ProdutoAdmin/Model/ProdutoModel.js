@@ -1,13 +1,16 @@
 import axios from "axios";
 import { formatarImagemBase64 } from "../../../utils/ImagemUtils";
+
+const API_URL = "http://localhost:9091/api/v1/produto";
+
 class ProdutoModel {
   // Buscar todos os produtos
   static async getAllProdutos() {
     try {
-      const response = await axios.get("http://localhost:9091/api/v1/produto");
+      const response = await axios.get(API_URL);
       return response.data.map((produto) => ({
         ...produto,
-        imagemBase64: formatarImagemBase64(produto.imagemBase64), // Formata a imagem antes de retornar
+        imagemBase64: formatarImagemBase64(produto.imagemBase64),
       }));
     } catch (err) {
       throw new Error("Erro ao buscar produtos: " + err.message);
@@ -16,17 +19,16 @@ class ProdutoModel {
 
   static async fetchProdutoById(id) {
     try {
-      const response = await axios.get(`http://localhost:9091/api/v1/produto/id/${id}`);
+      const response = await axios.get(`${API_URL}/id/${id}`);
       const produto = response.data;
       return {
         ...produto,
-        imagemBase64: formatarImagemBase64(produto.imagemBase64), // Formata a imagem ao buscar por ID
+        imagemBase64: formatarImagemBase64(produto.imagemBase64),
       };
     } catch (err) {
       throw new Error("Erro ao buscar o produto: " + err.message);
     }
   }
-
 
   // Buscar categorias
   static async fetchCategorias() {
@@ -41,7 +43,7 @@ class ProdutoModel {
   // Atualizar produto
   static async atualizarProduto(produto) {
     try {
-      await axios.put("http://localhost:9091/api/v1/produto", produto, {
+      await axios.put(API_URL, produto, {
         headers: { "Content-Type": "application/json" },
       });
     } catch (err) {
@@ -52,7 +54,7 @@ class ProdutoModel {
   // Cadastrar produto
   static async salvarProduto(produto) {
     try {
-      const response = await axios.post("http://localhost:9091/api/v1/produto", produto, {
+      const response = await axios.post(API_URL, produto, {
         headers: { "Content-Type": "application/json" },
       });
       return response.data;
@@ -61,20 +63,19 @@ class ProdutoModel {
     }
   }
 
-  /**
-   * Remove um ou mais produtos pelo ID, conforme esperado pela API.
-   * @param {Array<number>} ids - Lista de IDs dos produtos a serem removidos.
-   */
-  static async removerProdutos(ids) {
+  static async deleteProduto(id) {
     try {
-      await axios.delete("http://localhost:9091/api/v1/produto", {
-        data: ids, // Envia os IDs no corpo da requisição
-        headers: { "Content-Type": "application/json" },
+      await axios.delete(API_URL, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: [id], // Enviando o ID como uma lista no corpo
       });
-    } catch (err) {
-      throw new Error("Erro ao remover produtos: " + err.message);
+    } catch (error) {
+      throw new Error("Erro ao remover produto: " + error.message);
     }
   }
+
 }
 
 export default ProdutoModel;

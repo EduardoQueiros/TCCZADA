@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom"; // Para redirecionamento
 import CadastrarMesaController from "../Controller/CadastrarMesaController";
 import MesaModel from "../Model/MesaModel";
 import { AiOutlineSave, AiOutlineClose } from "react-icons/ai";
-
-
 
 function CadastrarMesaView() {
   const [codigo, setCodigo] = useState("");
   const [mesas, setMesas] = useState([]);
   const [error, setError] = useState(null);
+  const navigate = useNavigate(); // Hook para navegação
 
   useEffect(() => {
     const fetchMesas = async () => {
@@ -28,9 +29,18 @@ function CadastrarMesaView() {
       const novaMesa = await CadastrarMesaController.handleSalvar(codigo, mesas);
       setMesas([...mesas, novaMesa]);
       setCodigo("");
-      alert("Mesa salva com sucesso!");
+
+      // Exibir mensagem de sucesso e redirecionar após confirmação
+      Swal.fire({
+        title: "Sucesso!",
+        text: "Mesa cadastrada com sucesso!",
+        icon: "success",
+        confirmButtonText: "Ok",
+      }).then(() => {
+        navigate("/admin/home/mesa"); // Redireciona para MesaAdminPageView
+      });
     } catch (err) {
-      alert(err.message);
+      Swal.fire("Erro", err.message, "error");
     }
   };
 
@@ -39,9 +49,9 @@ function CadastrarMesaView() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-gradient-to-br from-orange-300 to-orange-500">
+    <div className="min-h-screen flex flex-col items-center bg-gradient-to-br from-blue-50 to-blue-100">
       {/* Header */}
-      <header className="w-full py-6 bg-orange-600 text-white shadow-md">
+      <header className="w-full py-6 bg-blue-600 text-white shadow-lg">
         <h1 className="text-3xl font-bold text-center">Cadastro de Mesa</h1>
       </header>
 
@@ -51,7 +61,7 @@ function CadastrarMesaView() {
           <input
             type="text"
             placeholder="Digite o código da mesa"
-            className="w-full text-center border border-gray-300 rounded-lg p-4 shadow-sm focus:outline-none focus:ring-4 focus:ring-orange-400"
+            className="w-full text-center border border-gray-300 rounded-lg p-4 shadow-sm focus:outline-none focus:ring-4 focus:ring-blue-300"
             value={codigo}
             onChange={(e) => setCodigo(e.target.value)}
           />
@@ -59,16 +69,13 @@ function CadastrarMesaView() {
 
         {/* Buttons */}
         <div className="flex space-x-4 mt-8">
-          <a href="/admin/home/mesa">
-            <button
-              className="flex items-center justify-center bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg shadow hover:bg-blue-700 transition"
-              onClick={handleSalvar}
-            >
-              <AiOutlineSave className="mr-2 text-xl" />
-              Salvar
-
-            </button>
-          </a>
+          <button
+            className="flex items-center justify-center bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg shadow hover:bg-blue-700 transition"
+            onClick={handleSalvar}
+          >
+            <AiOutlineSave className="mr-2 text-xl" />
+            Salvar
+          </button>
           <a href="/admin/home/mesa">
             <button className="flex items-center justify-center bg-red-600 text-white font-semibold px-6 py-3 rounded-lg shadow hover:bg-red-700 transition">
               <AiOutlineClose className="mr-2 text-xl" />
@@ -79,7 +86,7 @@ function CadastrarMesaView() {
       </main>
 
       {/* Footer */}
-      <footer className="w-full py-4 bg-orange-600 text-center text-white text-sm">
+      <footer className="w-full py-4 bg-blue-600 text-center text-white text-sm">
         © 2024 - Sistema de Cadastro de Mesas
       </footer>
     </div>

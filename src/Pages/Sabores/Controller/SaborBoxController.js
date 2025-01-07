@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import ItemBoxModelProduto from "../../Home/Model/ItemBoxModelProduto";
+import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 
 function SaborBoxController(searchTerm) {
@@ -10,13 +10,11 @@ function SaborBoxController(searchTerm) {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // Recupera o ID do cliente armazenado no localStorage
   const getClienteId = () => {
     const userLogin = JSON.parse(localStorage.getItem("userLogin"));
     return userLogin?.clienteId || null;
   };
 
-  // Busca os produtos já adicionados com status "RECEBIDO"
   const fetchProdutosJaAdicionados = async (clienteId) => {
     try {
       const response = await axios.post(
@@ -33,7 +31,6 @@ function SaborBoxController(searchTerm) {
     }
   };
 
-  // Adiciona o produto ao modelo e realiza o POST
   const adicionarProduto = async (produto) => {
     try {
       const clienteId = getClienteId();
@@ -44,35 +41,37 @@ function SaborBoxController(searchTerm) {
 
       const postData = [
         {
-          status: 1, // Definindo como 'ativo'
-          cliente: {
-            id: clienteId, // ID do cliente do localStorage
-          },
-          produto: {
-            id: produto.id, // ID do produto selecionado
-          },
+          status: 1,
+          cliente: { id: clienteId },
+          produto: { id: produto.id },
         },
       ];
 
-      // Realiza o POST na API
       await axios.post("http://localhost:9091/api/v1/cliente-preferencia", postData);
 
-      console.log("Produto adicionado com sucesso!");
+      Swal.fire({
+        title: "Sucesso!",
+        text: "Produto adicionado com sucesso!",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
 
-      // Remove o produto da lista de filtrados
       setFilteredProdutos((prevFiltrados) =>
         prevFiltrados.filter((filtrado) => filtrado.id !== produto.id)
       );
 
-      // Navega para a tela de Preferências
       navigate("/Preferencias");
     } catch (err) {
       console.error("Erro ao adicionar produto:", err);
-      alert("Erro ao adicionar o produto. Tente novamente.");
+      Swal.fire({
+        title: "Erro",
+        text: "Erro ao adicionar o produto. Tente novamente.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
     }
   };
 
-  // Busca produtos da API
   useEffect(() => {
     const fetchProdutos = async () => {
       setIsLoading(true);
@@ -83,10 +82,8 @@ function SaborBoxController(searchTerm) {
           throw new Error("ID do cliente não encontrado. Realize o login novamente.");
         }
 
-        // Busca produtos já adicionados
         const produtosJaAdicionadosIds = await fetchProdutosJaAdicionados(clienteId);
 
-        // Busca todos os produtos
         const response = await axios.get("http://localhost:9091/api/v1/produto");
 
         const produtosFiltrados = response.data.filter(
@@ -99,7 +96,12 @@ function SaborBoxController(searchTerm) {
         setFilteredProdutos(produtosFiltrados);
       } catch (err) {
         setError(err);
-        console.error(err);
+        Swal.fire({
+          title: "Erro",
+          text: "Erro ao carregar os produtos. Tente novamente mais tarde.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
       } finally {
         setIsLoading(false);
       }
@@ -108,7 +110,6 @@ function SaborBoxController(searchTerm) {
     fetchProdutos();
   }, []);
 
-  // Filtra produtos com base no termo de busca
   useEffect(() => {
     const filtrados = produtos.filter(
       (produto) =>

@@ -6,21 +6,7 @@ import MesaAdminPageController from "../Controller/MesaAdminPageController";
 
 function MesaAdminPageView() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [mesas, setMesas] = useState([]);
   const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchMesas = async () => {
-      try {
-        const mesas = await MesaAdminPageController.getFilteredMesas(searchTerm);
-        setMesas(mesas);
-      } catch (err) {
-        setError(err.message);
-      }
-    };
-
-    fetchMesas();
-  }, [searchTerm]);
 
   const handleSearch = (term) => setSearchTerm(term);
 
@@ -29,38 +15,42 @@ function MesaAdminPageView() {
   }
 
   return (
-    <div className="bg-orange-200 min-h-screen flex flex-col items-center">
-      {/* Cabeçalho */}
-      <div className="w-full bg-orange-500 shadow-lg">
-        <div className="flex items-center justify-between px-4 py-4">
-          <ReturnButton linkPage={"/admin/home"} />
-          <h1 className="text-white font-bold text-2xl text-center flex-1">Gerenciar Mesas</h1>
-          <div className="w-10"></div> {/* Placeholder para alinhamento */}
+    <div className="bg-gradient-to-b from-blue-50 to-blue-100 min-h-screen flex flex-col">
+      {/* Header fixo */}
+      <div className="sticky top-0 z-20 bg-blue-600 shadow-lg">
+        <div className="flex flex-col items-center w-full px-4 py-4">
+          {/* Retorno e título */}
+          <div className="flex items-center justify-between w-full max-w-5xl">
+            <ReturnButton linkPage={"/admin/home"} />
+            <h1 className="text-white font-bold text-2xl text-center flex-1">
+              Gerenciar Mesas
+            </h1>
+            <div className="w-10"></div> {/* Placeholder para alinhamento */}
+          </div>
+
+          {/* Campo de Pesquisa */}
+          <div className="w-full max-w-5xl mt-4">
+            <Search nome="Pesquise uma Mesa..." onSearch={handleSearch} />
+          </div>
         </div>
       </div>
 
-      {/* Conteúdo */}
-      <div className="w-full max-w-5xl mt-6 px-4">
-        {/* Busca */}
-        <div className="flex justify-center">
-          <Search
-            nome={"Pesquise uma Mesa..."}
-            onSearch={handleSearch}
-            className="w-full max-w-lg"
-          />
+      {/* Lista de Mesas */}
+      <main className="flex-grow px-4 pb-16 mt-4">
+        <section>
+          <BoxMesa searchTerm={searchTerm} />
+        </section>
+      </main>
+
+      {/* Botão fixo de Nova Mesa */}
+      <div className="fixed bottom-0 left-0 right-0 z-20 bg-blue-600 shadow-inner">
+        <div className="flex justify-center py-4">
+          <a href="/admin/home/mesa/cadastro">
+            <button className="bg-blue-700 hover:bg-blue-500 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition-transform transform hover:scale-105">
+              Nova Mesa
+            </button>
+          </a>
         </div>
-
-        {/* Lista de Mesas via BoxMesa */}
-        <BoxMesa searchTerm={searchTerm} />
-      </div>
-
-      {/* Botão de Nova Mesa */}
-      <div className="flex justify-end mt-8">
-        <a href="/admin/home/mesa/cadastro">
-          <button className="bg-blue-500 text-white font-bold py-2 px-6 rounded-lg shadow-md hover:bg-blue-600 transition-all">
-            Nova Mesa
-          </button>
-        </a>
       </div>
     </div>
   );

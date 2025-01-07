@@ -1,4 +1,5 @@
 import AdicionalController from "../Controller/AdicionalController";
+import Swal from "sweetalert2";
 
 function AdicionalBox({ searchTerm }) {
   const { adicionais, isLoading, error, adicionarAdicional } = AdicionalController(searchTerm);
@@ -33,7 +34,7 @@ function AdicionalBox({ searchTerm }) {
           {/* Informações do Adicional */}
           <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4">
             <h3 className="text-white text-lg font-bold truncate">{adicional.descricao}</h3>
-            <p className="text-orange-400 font-semibold mt-1">R${adicional.valor.toFixed(2)}</p>
+            <p className="text-blue-400 font-semibold mt-1">R${adicional.valor.toFixed(2)}</p>
           </div>
         </div>
       ))}

@@ -6,6 +6,7 @@ import PreferenciasControllerProduto from "../Controller/PreferenciasControllerP
 import { toast } from "react-toastify";
 import EstouSatisfeitoButton from "../Components/EstouSatisfeitoButton";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 function Preferencias() {
   const [clienteId, setClienteId] = useState(null);
@@ -35,8 +36,14 @@ function Preferencias() {
   useEffect(() => {
     const userLogin = JSON.parse(localStorage.getItem("userLogin"));
     if (!userLogin?.clienteId) {
-      toast.error("Cliente não encontrado. Faça login novamente.");
-      navigate("/login");
+      Swal.fire({
+        title: "Erro",
+        text: "Cliente não encontrado. Faça login novamente.",
+        icon: "error",
+        confirmButtonText: "OK",
+      }).then(() => {
+        navigate("/");
+      });
     } else {
       setClienteId(userLogin.clienteId);
     }
@@ -51,28 +58,44 @@ function Preferencias() {
   // Lógica para clique em adicional
   const handleClickAdicional = async (index) => {
     if (isAdicionalValido(index)) {
-      const confirmacao = window.confirm("Deseja atualizar o status deste adicional?");
-      if (confirmacao) {
+      const result = await Swal.fire({
+        title: "Confirmar",
+        text: "Deseja remover esse adicional!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sim",
+        cancelButtonText: "Não",
+      });
+
+      if (result.isConfirmed) {
         const adicional = adicionais[index];
         await updateProdutoStatus(adicional);
-        toast.success("Status do adicional atualizado com sucesso!");
+        Swal.fire("Sucesso!", "Adicional removido com sucesso!", "success");
       }
     } else {
-      toast.info("Este espaço está vazio. Não há item para atualizar.");
+      Swal.fire("Atenção", "Este espaço está vazio. Não há item para atualizar.", "info");
     }
   };
 
   // Lógica para clique em produto
   const handleClickProduto = async (index) => {
     if (isProdutoValido(index)) {
-      const confirmacao = window.confirm("Deseja atualizar o status deste produto?");
-      if (confirmacao) {
+      const result = await Swal.fire({
+        title: "Confirmar",
+        text: "Deseja remover esse produto!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sim",
+        cancelButtonText: "Não",
+      });
+
+      if (result.isConfirmed) {
         const produto = produtos[index];
         await updateProdutoStatusProduto(produto);
-        toast.success("Status do produto atualizado com sucesso!");
+        Swal.fire("Sucesso!", "Produto removido com sucesso!", "success");
       }
     } else {
-      toast.info("Este espaço está vazio. Não há item para atualizar.");
+      Swal.fire("Atenção", "Este espaço está vazio. Não há item para atualizar.", "info");
     }
   };
 

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import ItemBoxModelAdicional from "../../Home/Model/ItemBoxModelAdicional";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 function AdicionalController(searchTerm) {
   const [adicionais, setAdicionais] = useState([]); // Todos os adicionais
@@ -51,10 +52,10 @@ function AdicionalController(searchTerm) {
       // Navega para a tela de Preferências
       navigate("/Preferencias");
 
-      alert("Adicional adicionado com sucesso!");
+      Swal.fire("Sucesso!", "Adicional adicionado com sucesso!", "success");
     } catch (err) {
       console.error("Erro ao adicionar adicional:", err);
-      alert("Erro ao adicionar o adicional. Tente novamente.");
+      Swal.fire("Erro", "Erro ao adicionar o adicional. Tente novamente.", "error");
     }
   };
 
