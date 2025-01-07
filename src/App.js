@@ -13,7 +13,7 @@ import ProdutoAdminPage from "./PagesAdmin/ProdutoAdmin/View/ProdutoAdminPageVie
 import CadastrarProduto from "./PagesAdmin/ProdutoAdmin/View/CadastrarProdutoView";
 import EditarProduto from "./PagesAdmin/ProdutoAdmin/View/EditarProdutoView";
 import RelatorioAdminPage from "./PagesAdmin/RelatorioAdmin/View/RelatorioAdminPage";
-import Dash from "./PagesAdmin/DashAdmin/Dash";
+import DashPage from "./PagesAdmin/DashAdmin/View/DashPage";
 import AdcionaisPage from "./Pages/Adicionais/View/AdicionaisPage";
 import MesaAdminPage from "./PagesAdmin/MesaAdmin/View/MesaAdminPageView";
 import CadastrarMesa from "./PagesAdmin/MesaAdmin/View/CadastrarMesaView";
@@ -41,7 +41,7 @@ function App() {
         <Route path="/admin/home/produto/cadastrar" element={<CadastrarProduto />} />
         <Route path="/admin/home/produto/editar/:id" element={<EditarProduto />} /> {/* Rota ajustada */}
         <Route path="/admin/home/relatorio" element={<RelatorioAdminPage />} />
-        <Route path="/admin/home/dashboard" element={<Dash />} />
+        <Route path="/admin/home/dashboard" element={<DashPage />} />
         <Route path="/admin/home/mesa" element={<MesaAdminPage />} />
         <Route path="/admin/home/mesa/cadastro" element={<CadastrarMesa />} />
       </Routes>

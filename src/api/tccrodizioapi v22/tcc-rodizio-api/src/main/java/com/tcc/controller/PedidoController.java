@@ -1,9 +1,11 @@
 package com.tcc.controller;
 
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tcc.controller.conversor.MapConverter;
@@ -63,6 +66,15 @@ public class PedidoController {
     @PostMapping("/criteria")
     public ResponseEntity<List<Pedido>> buscarComFiltros(@RequestBody Pedido pedidoFiltro) {
         List<Pedido> pedidos = pedidoService.buscarComFiltros(pedidoFiltro);
+        return ResponseEntity.ok(pedidos);
+    }
+
+     @GetMapping("/date-between")
+    public ResponseEntity<List<Pedido>> buscarPedidosPorFechamentoEntreDatas(
+        @RequestParam("dataInicio") @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm") LocalDateTime dataInicio,
+        @RequestParam("dataFim") @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm") LocalDateTime dataFim
+    ) {
+        List<Pedido> pedidos = pedidoService.buscarPedidosPorFechamentoEntreDatas(dataInicio, dataFim);
         return ResponseEntity.ok(pedidos);
     }
 }

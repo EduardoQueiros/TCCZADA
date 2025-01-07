@@ -1,5 +1,6 @@
 package com.tcc.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -101,6 +102,10 @@ public class PedidoService {
 	public List<Pedido> buscarComFiltros(Pedido pedidoFiltro) {
         Specification<Pedido> specification = PedidoSpecification.comFiltros(pedidoFiltro);
         return pedidoRepository.findAll(specification);
+    }
+
+	 public List<Pedido> buscarPedidosPorFechamentoEntreDatas(LocalDateTime dataInicio, LocalDateTime dataFim) {
+        return pedidoRepository.findByDataHoraFechamentoBetween(dataInicio, dataFim);
     }
 
 }

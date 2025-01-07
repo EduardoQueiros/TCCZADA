@@ -1,13 +1,49 @@
 import React, { useState } from "react";
+import Swal from "sweetalert2"; // Importa o SweetAlert2
 
 function FiltrosRelatorio({ setStartDate, setEndDate, setSelectedCategory, onFilter }) {
   const [localStartDate, setLocalStartDate] = useState("");
   const [localEndDate, setLocalEndDate] = useState("");
+  const [localCategory, setLocalCategory] = useState(""); // Adicionado para validação de categoria
 
   const handleFilterClick = () => {
-    setStartDate(localStartDate);
-    setEndDate(localEndDate);
-    onFilter(); // Ativa o filtro
+    if (!localCategory) {
+      // Exibe um alerta se a categoria não for selecionada
+      Swal.fire({
+        icon: "warning",
+        title: "Tipo de Relatório Não Selecionado",
+        text: "Por favor, selecione um tipo de relatório antes de filtrar.",
+        confirmButtonText: "Ok",
+      });
+      return;
+    }
+
+    if (localStartDate && localEndDate) {
+      const formattedStartDate = `${localStartDate} 00:00`; // Adiciona 00:00 como padrão
+      const formattedEndDate = `${localEndDate} 23:59`; // Adiciona 23:59 como padrão
+      setStartDate(formattedStartDate);
+      setEndDate(formattedEndDate);
+      setSelectedCategory(localCategory); // Salva a categoria selecionada
+      onFilter();
+
+      // Exibe um alerta de sucesso com SweetAlert2
+      Swal.fire({
+        icon: "success",
+        title: "Filtro Aplicado!",
+        text: `Os pedidos no intervalo de ${localStartDate} a ${localEndDate} foram carregados.`,
+        timer: 3000,
+        timerProgressBar: true,
+        showConfirmButton: false,
+      });
+    } else {
+      // Exibe um alerta de erro com SweetAlert2
+      Swal.fire({
+        icon: "error",
+        title: "Erro ao Aplicar Filtro",
+        text: "Por favor, selecione as datas para o filtro.",
+        confirmButtonText: "Ok",
+      });
+    }
   };
 
   return (
@@ -28,7 +64,8 @@ function FiltrosRelatorio({ setStartDate, setEndDate, setSelectedCategory, onFil
       </div>
       <div className="mb-4">
         <select
-          onChange={(e) => setSelectedCategory(e.target.value)}
+          value={localCategory}
+          onChange={(e) => setLocalCategory(e.target.value)}
           className="border border-gray-400 rounded-lg p-3 w-80 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="">Selecione um Relatório</option>

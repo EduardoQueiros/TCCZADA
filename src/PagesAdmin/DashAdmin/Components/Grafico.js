@@ -1,61 +1,103 @@
-import React, { useEffect, useState } from 'react';
-import { Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import React, { useState } from "react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+const Grafico = ({ graficoPedidosPorMesa }) => {
+  const [selectedMesa, setSelectedMesa] = useState(null);
 
-const Grafico = () => {
-  const [data, setData] = useState({
-    labels: ['Mesa 1', 'Mesa 2', 'Mesa 3'],
-    datasets: [
-      {
-        data: [30, 40, 30], // Porcentagens iniciais
-        backgroundColor: ['#4F46E5', '#F43F5E', '#10B981'], // Cores suaves
-        hoverBackgroundColor: ['#4338CA', '#BE123C', '#059669'], // Cores ao passar o mouse
-        borderWidth: 0, // Remover bordas
-      },
-    ],
-  });
+  if (!graficoPedidosPorMesa || graficoPedidosPorMesa.length === 0) {
+    return (
+      <p className="text-center text-gray-600">
+        Nenhum dado disponível para os gráficos.
+      </p>
+    );
+  }
 
-  const generateRandomData = () => {
-    const randomValues = Array.from({ length: 3 }, () => Math.floor(Math.random() * 50) + 10);
-    const total = randomValues.reduce((a, b) => a + b, 0);
-    const percentageValues = randomValues.map(value => Math.round((value / total) * 100));
+  const COLORS = ["#4F46E5", "#F43F5E", "#10B981", "#F59E0B", "#6366F1", "#E11D48"];
 
-    setData({
-      labels: ['Mesa 1', 'Mesa 2', 'Mesa 3'],
-      datasets: [
-        {
-          data: percentageValues,
-          backgroundColor: ['#4F46E5', '#F43F5E', '#10B981'],
-          hoverBackgroundColor: ['#4338CA', '#BE123C', '#059669'],
-          borderWidth: 0,
-        },
-      ],
-    });
+  const handleBarClick = (data) => {
+    setSelectedMesa(data?.mesa ? data : null); // Define a mesa selecionada ou limpa
   };
 
-  useEffect(() => {
-    const interval = setInterval(generateRandomData, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
   return (
-    <div className="max-w-sm w-full bg-white p-6 rounded-lg shadow-lg transform transition duration-300 hover:shadow-xl">
-      <h2 className="text-2xl font-semibold text-gray-800 text-center mb-6">Relatório por Mesa</h2>
-      <div className="w-48 h-48 mx-auto">
-        <Pie data={data} options={{ plugins: { legend: { display: false } } }} />
+    <div className="flex flex-wrap gap-8 justify-center">
+      {/* Gráfico de Pizza */}
+      <div className="bg-white p-6 rounded-lg shadow-md transition duration-300 hover:shadow-lg w-full md:w-[48%]">
+        <h3 className="text-center font-bold text-lg mb-4">
+          Total de Pedidos por Mesa
+        </h3>
+        <ResponsiveContainer width="100%" height={400}>
+          <PieChart>
+            <Pie
+              data={graficoPedidosPorMesa}
+              dataKey="quantidade"
+              nameKey="mesa"
+              cx="50%"
+              cy="50%"
+              outerRadius={150}
+              fill="#4F46E5"
+              label={({ name, value }) => `${name}: ${value}`}
+            >
+              {graficoPedidosPorMesa.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip />
+            <Legend />
+          </PieChart>
+        </ResponsiveContainer>
       </div>
-      <div className="mt-6 space-y-2">
-        {data.labels.map((label, index) => (
-          <div key={index} className="flex items-center justify-center space-x-2">
-            <span
-              className="block w-3 h-3 rounded-full"
-              style={{ backgroundColor: data.datasets[0].backgroundColor[index] }}
-            ></span>
-            <span className="text-gray-600 text-sm">{label}: {data.datasets[0].data[index]}%</span>
+
+      {/* Gráfico de Barras */}
+      <div className="bg-white p-6 rounded-lg shadow-md transition duration-300 hover:shadow-lg w-full md:w-[48%]">
+        <h3 className="text-center font-bold text-lg mb-4">
+          Total de Produtos nos Pedidos por Mesa
+        </h3>
+        <ResponsiveContainer width="100%" height={400}>
+          <BarChart
+            data={graficoPedidosPorMesa}
+            margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
+            onClick={(e) => handleBarClick(e?.activePayload?.[0]?.payload)}
+          >
+            <XAxis
+              dataKey="mesa"
+              label={{
+                value: "Mesas",
+                position: "insideBottom",
+                offset: -5,
+              }}
+            />
+            <YAxis
+              label={{
+                value: "Total de Produtos",
+                angle: -90,
+                position: "insideLeft",
+              }}
+            />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="totalProdutos" fill="#4F46E5" name="Total de Produtos" />
+          </BarChart>
+        </ResponsiveContainer>
+
+        {/* Detalhes Interativos */}
+        {selectedMesa && (
+          <div className="mt-4 text-center text-gray-700">
+            <h4 className="font-bold">Detalhes da Mesa {selectedMesa.mesa}</h4>
+            <p>Total de Produtos: {selectedMesa.totalProdutos}</p>
+            <p>Total de Pedidos: {selectedMesa.quantidade}</p>
           </div>
-        ))}
+        )}
       </div>
     </div>
   );

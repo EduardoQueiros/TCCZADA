@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import RelatorioModel from "../Model/RelatorioModel";
+import Swal from "sweetalert2"; // Importa o SweetAlert2
 
 function ControllerRelPedidoPorMesa(startDate, endDate, filtroAtivado) {
   const [isLoading, setIsLoading] = useState(false);
@@ -8,77 +9,80 @@ function ControllerRelPedidoPorMesa(startDate, endDate, filtroAtivado) {
 
   useEffect(() => {
     const fetchAndProcessPedidos = async () => {
-      if (!filtroAtivado) return; // Evita buscar dados sem ativar o filtro
+      if (!filtroAtivado || !startDate || !endDate) return;
 
       setIsLoading(true);
+
       try {
-        const mesas = await RelatorioModel.fetchMesas(); // Busca todas as mesas cadastradas
-        const groupedPedidos = [];
+        const pedidos = await RelatorioModel.fetchPedidosByDateRange(startDate, endDate);
 
-        for (const mesa of mesas) {
-          const itemPedidos = await RelatorioModel.fetchItemPedidos(
-            mesa.id,
-            startDate,
-            endDate
-          );
+        if (pedidos.length === 0) {
+          // Alerta informando que nenhum pedido foi encontrado no intervalo
+          Swal.fire({
+            icon: "info",
+            title: "Nenhum Pedido Encontrado",
+            text: `Não foram encontrados pedidos no intervalo de ${startDate} a ${endDate}.`,
+            confirmButtonText: "Ok",
+          });
 
-          if (itemPedidos.length > 0) {
-            const pedidosAgrupados = itemPedidos.reduce((acc, item) => {
-              const pedidoId = item.pedido.id;
-
-              if (!acc[pedidoId]) {
-                acc[pedidoId] = {
-                  pedido: item.pedido,
-                  produtos: {},
-                  totalProdutos: 0,
-                };
-              }
-
-              // Filtra apenas produtos no intervalo de datas
-              const fechamentoTimestamp = new Date(item.pedido.dataHoraFechamento).getTime();
-              const start = startDate ? new Date(startDate).getTime() : null;
-              const end = endDate ? new Date(endDate).getTime() : null;
-
-              const withinStartDate = !start || fechamentoTimestamp >= start;
-              const withinEndDate = !end || fechamentoTimestamp <= end;
-
-              if (withinStartDate && withinEndDate) {
-                const produtoId = item.produto.id;
-
-                if (!acc[pedidoId].produtos[produtoId]) {
-                  acc[pedidoId].produtos[produtoId] = {
-                    descricao: item.produto.descricao,
-                    quantidade: 0,
-                  };
-                }
-
-                acc[pedidoId].produtos[produtoId].quantidade += item.qtdProduto;
-                acc[pedidoId].totalProdutos += item.qtdProduto;
-              }
-
-              return acc;
-            }, {});
-
-            if (Object.keys(pedidosAgrupados).length > 0) {
-              groupedPedidos.push({
-                mesaId: mesa.id,
-                totalPedidos: Object.keys(pedidosAgrupados).length,
-                totalProdutos: itemPedidos.reduce(
-                  (sum, item) => sum + item.qtdProduto,
-                  0
-                ),
-                pedidos: Object.values(pedidosAgrupados).map((pedido) => ({
-                  ...pedido,
-                  produtosAgrupados: Object.values(pedido.produtos),
-                })),
-              });
-            }
-          }
+          setPedidosFiltrados([]); // Define a lista de pedidos filtrados como vazia
+          return; // Sai da função para evitar processamento desnecessário
         }
 
-        setPedidosFiltrados(groupedPedidos);
+        const pedidosAgrupados = [];
+        for (const pedido of pedidos) {
+          const itensPedido = await RelatorioModel.fetchItemPedidos(pedido.id);
+
+          const produtosAgrupados = itensPedido.reduce((acc, item) => {
+            const produtoId = item.produto.id;
+
+            if (!acc[produtoId]) {
+              acc[produtoId] = {
+                descricao: item.produto.descricao,
+                quantidade: 0,
+              };
+            }
+
+            acc[produtoId].quantidade += item.qtdProduto;
+
+            return acc;
+          }, {});
+
+          pedidosAgrupados.push({
+            mesaId: pedido.cliente.mesa.id,
+            codigoMesa: pedido.cliente.mesa.codigoMesa,
+            totalProdutos: itensPedido.reduce((sum, item) => sum + item.qtdProduto, 0),
+            totalPedidos: 1,
+            pedidos: [
+              {
+                pedido,
+                produtosAgrupados: Object.values(produtosAgrupados),
+                totalProdutos: itensPedido.reduce((sum, item) => sum + item.qtdProduto, 0),
+              },
+            ],
+          });
+        }
+
+        setPedidosFiltrados(pedidosAgrupados);
+
+        // Exibe um alerta de sucesso ao carregar os pedidos
+        Swal.fire({
+          icon: "success",
+          title: "Pedidos Carregados com Sucesso!",
+          timer: 3000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+        });
       } catch (err) {
         setError(err);
+
+        // Exibe alerta de erro com detalhes
+        Swal.fire({
+          icon: "error",
+          title: "Erro ao Carregar Pedidos",
+          text: err.message,
+          confirmButtonText: "Ok",
+        });
       } finally {
         setIsLoading(false);
       }

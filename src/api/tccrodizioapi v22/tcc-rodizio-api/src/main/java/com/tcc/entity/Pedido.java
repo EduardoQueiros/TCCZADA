@@ -48,7 +48,6 @@ public class Pedido {
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
 	private LocalDateTime dataHoraAbertura;
 
-	@NotNull
 	@Column(name = "dataHoraFechamento")
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
 	private LocalDateTime dataHoraFechamento;
