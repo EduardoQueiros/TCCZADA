@@ -60,7 +60,7 @@ function Preferencias() {
     if (isAdicionalValido(index)) {
       const result = await Swal.fire({
         title: "Confirmar",
-        text: "Deseja remover esse adicional!",
+        text: "Esse Adicional Foi Recebido?",
         icon: "warning",
         showCancelButton: true,
         confirmButtonText: "Sim",
@@ -70,7 +70,7 @@ function Preferencias() {
       if (result.isConfirmed) {
         const adicional = adicionais[index];
         await updateProdutoStatus(adicional);
-        Swal.fire("Sucesso!", "Adicional removido com sucesso!", "success");
+        Swal.fire("Sucesso!", "Adicional recebido com sucesso!", "success");
       }
     } else {
       Swal.fire("Atenção", "Este espaço está vazio. Não há item para atualizar.", "info");
@@ -82,7 +82,7 @@ function Preferencias() {
     if (isProdutoValido(index)) {
       const result = await Swal.fire({
         title: "Confirmar",
-        text: "Deseja remover esse produto!",
+        text: "Esse produto ja foi recebido?",
         icon: "warning",
         showCancelButton: true,
         confirmButtonText: "Sim",
@@ -92,7 +92,7 @@ function Preferencias() {
       if (result.isConfirmed) {
         const produto = produtos[index];
         await updateProdutoStatusProduto(produto);
-        Swal.fire("Sucesso!", "Produto removido com sucesso!", "success");
+        Swal.fire("Sucesso!", "Produto recebido com sucesso!", "success");
       }
     } else {
       Swal.fire("Atenção", "Este espaço está vazio. Não há item para atualizar.", "info");

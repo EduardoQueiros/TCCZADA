@@ -4,7 +4,7 @@ import Preferencias from "./Pages/Home/View/Preferencias";
 import LoginPage from "./Pages/Login/View/LoginPage";
 import SaboresPage from "./Pages/Sabores/View/SaboresPage";
 import LoginAdminPage from "./PagesAdmin/LoginAdmin/LoginAdminPage";
-import HomeAdmin from "./PagesAdmin/HomeAdmin/HomeAdmin";
+import HomeAdmin from "./PagesAdmin/HomeAdmin/View/HomeAdmin";
 import PedidoPageAdminView from "./PagesAdmin/PedidoAdmin/View/PedidoPageAdminView";
 import MaisPedidoView from "./PagesAdmin/PedidoAdmin/View/MaisPedidoView";
 import CategoriaAdminPage from "./PagesAdmin/CategoriaAdmin/View/CategoriaAdminPageView";
