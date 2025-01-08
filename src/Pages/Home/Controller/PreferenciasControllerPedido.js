@@ -22,11 +22,24 @@ const PreferenciasControllerPedido = {
                 throw new Error("ID do pedido não encontrado.");
             }
 
+            // Obtém os detalhes do pedido para recuperar a dataHoraAbertura
+            console.log(`Buscando informações do pedido ${pedidoId}...`);
+            const pedidoResponse = await axios.post(`${API_BASE_URL}/pedido/criteria`, { id: pedidoId });
+            const pedido = pedidoResponse.data[0];
+
+            if (!pedido || !pedido.dataHoraAbertura) {
+                throw new Error("Erro ao obter a dataHoraAbertura do pedido.");
+            }
+
+            const dataHoraAbertura = pedido.dataHoraAbertura;
+            console.log("DataHoraAbertura obtida:", dataHoraAbertura);
+
             const dataHoraAtual = formatDateTime(new Date());
 
-            // Atualiza o pedido com os dados finais
+            // Atualiza o pedido com os dados finais, incluindo dataHoraAbertura
             const pedidoPayload = {
                 id: pedidoId,
+                dataHoraAbertura: dataHoraAbertura, // Inclui a dataHoraAbertura original
                 dataHoraFechamento: dataHoraAtual,
                 totalPedido: 0, // Atualize o valor total conforme necessário
                 status: "FECHADO",
@@ -35,7 +48,7 @@ const PreferenciasControllerPedido = {
 
             console.log("Payload do pedido para atualização:", JSON.stringify(pedidoPayload, null, 2));
 
-            // Envia a requisição PUT para atualizar o pedido (com payload no corpo)
+            // Envia a requisição PUT para atualizar o pedido
             await axios.put(`${API_BASE_URL}/pedido`, pedidoPayload);
             console.log("Pedido atualizado com sucesso.");
 
