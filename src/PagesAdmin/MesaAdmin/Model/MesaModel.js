@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:9091/api/v1/mesa";
+const API_URL = "http://44.200.213.219:9091/api/v1/mesa";
 
 class MesaModel {
   static async fetchMesas() {

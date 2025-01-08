@@ -1,7 +1,7 @@
 import axios from "axios";
 import { format } from "date-fns";
 
-const API_BASE_URL = "http://localhost:9091/api/v1";
+const API_BASE_URL = "http://44.200.213.219:9091/api/v1";
 
 const RelatorioModel = {
   fetchPedidosByDateRange: async (startDate, endDate) => {

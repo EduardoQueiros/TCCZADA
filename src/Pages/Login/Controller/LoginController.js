@@ -25,7 +25,7 @@ function LoginController() {
             };
             console.log("Verificando mesa com payload:", JSON.stringify(payload, null, 2));
 
-            const response = await axios.post("http://localhost:9091/api/v1/mesa/criteria", payload);
+            const response = await axios.post("http://44.200.213.219:9091/api/v1/mesa/criteria", payload);
 
             if (response.data && response.data.length > 0) {
                 console.log("Mesa encontrada:", response.data);
@@ -57,7 +57,7 @@ function LoginController() {
             ];
             console.log("Criando pedido com payload:", JSON.stringify(pedidoPayload, null, 2));
 
-            const response = await axios.post("http://localhost:9091/api/v1/pedido", pedidoPayload);
+            const response = await axios.post("http://44.200.213.219:9091/api/v1/pedido", pedidoPayload);
 
             if (response.data && response.data.length > 0) {
                 const pedido = response.data[0];
@@ -77,7 +77,7 @@ function LoginController() {
             const payload = { cliente: { id: clienteId } };
             console.log("Buscando pedido com payload:", JSON.stringify(payload, null, 2));
 
-            const response = await axios.post("http://localhost:9091/api/v1/pedido/criteria", payload);
+            const response = await axios.post("http://44.200.213.219:9091/api/v1/pedido/criteria", payload);
 
             if (response.data && response.data.length > 0) {
                 const pedido = response.data[0];
@@ -110,7 +110,7 @@ function LoginController() {
                 ];
                 console.log("Enviando payload do cliente:", JSON.stringify(clientePayload, null, 2));
 
-                const clienteResponse = await axios.post("http://localhost:9091/api/v1/cliente", clientePayload);
+                const clienteResponse = await axios.post("http://44.200.213.219:9091/api/v1/cliente", clientePayload);
                 const clienteId = clienteResponse.data?.[0]?.id;
 
                 if (!clienteId) {

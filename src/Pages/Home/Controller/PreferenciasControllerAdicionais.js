@@ -22,7 +22,7 @@ function PreferenciasControllerAdicionais() {
     try {
       // Substitui {id} pelo clienteId
       const response = await fetch(
-        `http://localhost:9091/api/v1/cliente-preferencia/custom/com-adicionais/${clienteId}`,
+        `http://44.200.213.219:9091/api/v1/cliente-preferencia/custom/com-adicionais/${clienteId}`,
         {
           method: "GET",
           headers: {
@@ -94,7 +94,7 @@ function PreferenciasControllerAdicionais() {
       console.log("Corpo da requisição enviado para o PUT:", JSON.stringify(body, null, 2));
 
       // Faz a requisição PUT
-      const response = await fetch("http://localhost:9091/api/v1/cliente-preferencia", {
+      const response = await fetch("http://44.200.213.219:9091/api/v1/cliente-preferencia", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

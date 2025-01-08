@@ -18,7 +18,7 @@ function SaborBoxController(searchTerm) {
   const fetchProdutosJaAdicionados = async (clienteId) => {
     try {
       const response = await axios.post(
-        "http://localhost:9091/api/v1/cliente-preferencia/criteria",
+        "http://44.200.213.219:9091/api/v1/cliente-preferencia/criteria",
         {
           status: "RECEBIDO",
           cliente: { id: clienteId },
@@ -47,7 +47,7 @@ function SaborBoxController(searchTerm) {
         },
       ];
 
-      await axios.post("http://localhost:9091/api/v1/cliente-preferencia", postData);
+      await axios.post("http://44.200.213.219:9091/api/v1/cliente-preferencia", postData);
 
       Swal.fire({
         title: "Sucesso!",
@@ -84,7 +84,7 @@ function SaborBoxController(searchTerm) {
 
         const produtosJaAdicionadosIds = await fetchProdutosJaAdicionados(clienteId);
 
-        const response = await axios.get("http://localhost:9091/api/v1/produto");
+        const response = await axios.get("http://44.200.213.219:9091/api/v1/produto");
 
         const produtosFiltrados = response.data.filter(
           (produto) =>

@@ -12,7 +12,7 @@ function BoxMesa({ searchTerm }) {
   useEffect(() => {
     const fetchMesa = async () => {
       try {
-        const response = await axios.get("http://localhost:9091/api/v1/mesa");
+        const response = await axios.get("http://44.200.213.219:9091/api/v1/mesa");
         setMesas(response.data);
         setFilteredMesas(response.data);
       } catch (err) {
@@ -51,7 +51,7 @@ function BoxMesa({ searchTerm }) {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete("http://localhost:9091/api/v1/mesa", {
+          await axios.delete("http://44.200.213.219:9091/api/v1/mesa", {
             headers: { "Content-Type": "application/json" },
             data: [id], // Envia o ID como um array
           });
