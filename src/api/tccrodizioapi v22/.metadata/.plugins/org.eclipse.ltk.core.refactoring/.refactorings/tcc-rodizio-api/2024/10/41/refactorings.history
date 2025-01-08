@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename compilation unit &apos;com.tcc.configs.WebMvcConfigurer.java&apos; to &apos;WebConfig.java&apos;&#x0D;&#x0A;- Original project: &apos;tcc-rodizio-api&apos;&#x0D;&#x0A;- Original element: &apos;com.tcc.configs.WebMvcConfigurer.java&apos;&#x0D;&#x0A;- Renamed element: &apos;com.tcc.configs.WebConfig.java&apos;" description="Rename compilation unit &apos;WebMvcConfigurer.java&apos;" flags="2" id="org.eclipse.jdt.ui.rename.compilationunit" input="/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;com.tcc.configs{WebMvcConfigurer.java" name="WebConfig.java" references="false" stamp="1728757630509" version="1.0"/>
-</session>

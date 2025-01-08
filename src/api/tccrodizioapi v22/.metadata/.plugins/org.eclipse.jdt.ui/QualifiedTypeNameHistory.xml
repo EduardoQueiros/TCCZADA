@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<qualifiedTypeNameHistroy>
-    <fullyQualifiedTypeName name="org.hibernate.dialect.function.TrimFunctionTemplate.Specification"/>
-    <fullyQualifiedTypeName name="com.tcc.entity.ClientePreferencia"/>
-    <fullyQualifiedTypeName name="java.util.Base64"/>
-</qualifiedTypeNameHistroy>
