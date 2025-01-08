@@ -19,8 +19,18 @@ function DashFiltros({ setStartDate, setEndDate, setSelectedType, onFilter }) {
 
     setStartDate(localStartDate);
     setEndDate(localEndDate);
-    setSelectedType(localSelectedType); // Corrigido
+    setSelectedType(localSelectedType);
     onFilter();
+
+    // Exibe o alerta de sucesso aqui
+    Swal.fire({
+      icon: "success",
+      title: "Filtro aplicado com sucesso!",
+      text: `Os dados foram carregados para o intervalo de ${localStartDate} a ${localEndDate}.`,
+      timer: 2000,
+      timerProgressBar: true,
+      showConfirmButton: false,
+    });
   };
 
   return (

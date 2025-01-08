@@ -64,15 +64,6 @@ function ControllerRelPedidoPorMesa(startDate, endDate, filtroAtivado) {
         }
 
         setPedidosFiltrados(pedidosAgrupados);
-
-        // Exibe um alerta de sucesso ao carregar os pedidos
-        Swal.fire({
-          icon: "success",
-          title: "Pedidos Carregados com Sucesso!",
-          timer: 3000,
-          timerProgressBar: true,
-          showConfirmButton: false,
-        });
       } catch (err) {
         setError(err);
 

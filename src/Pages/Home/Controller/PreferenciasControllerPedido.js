@@ -42,7 +42,7 @@ const PreferenciasControllerPedido = {
                 dataHoraAbertura: dataHoraAbertura, // Inclui a dataHoraAbertura original
                 dataHoraFechamento: dataHoraAtual,
                 totalPedido: 0, // Atualize o valor total conforme necessário
-                status: "FECHADO",
+                status: "NOTIFICA",
                 cliente: { id: clienteId },
             };
 

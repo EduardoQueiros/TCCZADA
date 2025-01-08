@@ -57,15 +57,6 @@ function DashController() {
         // Passo 3: Transformar os dados para os gráficos
         const graficoData = DashModel.transformGraficoData(itens);
         setGraficoPedidosPorMesa(graficoData);
-
-        Swal.fire({
-          icon: "success",
-          title: "Dados carregados!",
-          text: "Os gráficos foram atualizados.",
-          timer: 2000,
-          timerProgressBar: true,
-          showConfirmButton: false,
-        });
       }
     } catch (err) {
       setError(err.message);

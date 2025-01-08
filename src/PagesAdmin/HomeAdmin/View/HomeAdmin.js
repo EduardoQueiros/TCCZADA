@@ -10,7 +10,7 @@ function HomeAdmin() {
     return (
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 min-h-screen flex flex-col items-center">
             {/* Cabeçalho */}
-            <header className="w-full py-6 bg-blue-600 text-white shadow-lg flex justify-between items-center px-6">
+            <header className="w-full py-6 bg-blue-600 text-white shadow-lg flex justify-between items-center px-6 text-center">
                 <h1 className="text-4xl font-bold">Painel Administrativo</h1>
                 <button
                     className="bg-white text-blue-600 p-4 rounded-full shadow-md hover:bg-blue-100 hover:scale-105 transition-transform duration-300"
