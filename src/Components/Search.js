@@ -32,12 +32,17 @@ function Search({ nome, onSearch }) {
 
         {/* Campo de busca */}
         <input
-          type="text"
-          className="w-full py-3 pl-10 pr-4 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-blue-500 sm:text-sm"
-          placeholder={`${nome}`}
-          value={searchTerm}
-          onChange={handleSearchChange}
-        />
+  type="text"
+  className="w-full py-3 pl-10 pr-4 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none focus:border-blue-500 sm:text-sm"
+  placeholder={`${nome}`}
+  value={searchTerm}
+  onChange={(e) => {
+    const regex = /^[\p{L}\p{N}\s]+$/u; // Adiciona a flag 'u' para Unicode
+    if (e.target.value === '' || regex.test(e.target.value)) {
+      handleSearchChange(e); // Atualiza o estado somente se o valor for válido
+    }
+  }}
+/>
       </div>
     </div>
   );

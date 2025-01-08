@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -55,6 +56,7 @@ public class Pedido {
 	@Column(name = "totalPedido")
 	private Double totalPedido;
 	
+	@Enumerated
 	@Column(name = "status")
 	private PedidoEnum status;
 
