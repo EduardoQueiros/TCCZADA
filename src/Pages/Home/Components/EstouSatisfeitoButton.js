@@ -17,15 +17,19 @@ function EstouSatisfeitoButton({ itens }) {
     try {
       console.log("Chamando handleEstouSatisfeito...");
 
-      const clienteId = JSON.parse(localStorage.getItem("userLogin"))?.clienteId;
-      if (!clienteId) {
-        toast.error("ID do cliente não encontrado. Faça login novamente.");
+      // Recupera os dados do cliente e do pedido do localStorage
+      const userLogin = JSON.parse(localStorage.getItem("userLogin"));
+      const clienteId = userLogin?.clienteId;
+      const pedidoId = userLogin?.pedidoId;
+
+      if (!clienteId || !pedidoId) {
+        toast.error("Dados do cliente ou pedido não encontrados. Faça login novamente.");
         navigate("/login");
         return;
       }
 
-      // Executa o fluxo de pedido
-      await PreferenciasControllerPedido.handleEstouSatisfeito(clienteId, itens);
+      // Atualiza o pedido e adiciona itens ao pedido
+      await PreferenciasControllerPedido.handleEstouSatisfeito(clienteId, pedidoId, itens);
 
       toast.success("Pedido finalizado com sucesso!");
       setShowModalConfirm(false);

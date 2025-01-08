@@ -1,90 +1,111 @@
 import PedidoModel from "../Model/PedidoModel";
 import axios from "axios";
 import { formatDateTime } from "../../../Components/DateUtils";
+import Swal from "sweetalert2";
+
+const API_BASE_URL = "http://localhost:9091/api/v1";
 
 const PreferenciasControllerPedido = {
-  handleEstouSatisfeito: async (clienteId) => {
-    try {
-      console.log("Início do fluxo 'Estou Satisfeito'");
-      if (!clienteId) throw new Error("ID do cliente não encontrado.");
+    handleEstouSatisfeito: async (clienteId) => {
+        try {
+            console.log("Início do fluxo 'Estou Satisfeito'");
 
-      const dataHoraAtual = formatDateTime(new Date());
+            if (!clienteId) {
+                throw new Error("ID do cliente não encontrado.");
+            }
 
-      const pedidoPayload = [
-        {
-          dataHoraFechamento: dataHoraAtual,
-          totalPedido: 0,
-          status: "FECHADO",
-          cliente: { id: clienteId },
-        },
-      ];
+            // Recupera o ID do pedido do localStorage
+            const userLogin = JSON.parse(localStorage.getItem("userLogin"));
+            const pedidoId = userLogin?.pedidoId;
 
-      console.log("Payload do pedido preparado:", JSON.stringify(pedidoPayload, null, 2));
+            if (!pedidoId) {
+                throw new Error("ID do pedido não encontrado.");
+            }
 
-      // Cria o pedido
-      await PedidoModel.criarPedido(pedidoPayload);
+            const dataHoraAtual = formatDateTime(new Date());
 
-      // Busca o ID do pedido recém-criado
-      const pedidos = await PedidoModel.buscarPedidoPorCliente(clienteId);
+            // Atualiza o pedido com os dados finais
+            const pedidoPayload = {
+                id: pedidoId,
+                dataHoraFechamento: dataHoraAtual,
+                totalPedido: 0, // Atualize o valor total conforme necessário
+                status: "FECHADO",
+                cliente: { id: clienteId },
+            };
 
-      if (!pedidos || pedidos.length === 0) {
-        throw new Error("Nenhum pedido encontrado para o cliente.");
-      }
+            console.log("Payload do pedido para atualização:", JSON.stringify(pedidoPayload, null, 2));
 
-      const pedido = pedidos[0]; // Considera o primeiro pedido retornado
-      console.log(`Pedido recuperado com ID: ${pedido.id}`);
+            // Envia a requisição PUT para atualizar o pedido (com payload no corpo)
+            await axios.put(`${API_BASE_URL}/pedido`, pedidoPayload);
+            console.log("Pedido atualizado com sucesso.");
 
-      // **Busca todos os itens do cliente em cliente-preferencia**
-      const clientePreferenciaPayload = { cliente: { id: clienteId } };
-      console.log("Buscando itens do cliente em cliente-preferencia...");
-      const clientePreferencias = await axios.post(
-        "http://localhost:9091/api/v1/cliente-preferencia/criteria",
-        clientePreferenciaPayload
-      );
+            // Busca as preferências do cliente para vincular ao pedido
+            const clientePreferenciaPayload = { cliente: { id: clienteId } };
+            console.log("Buscando itens do cliente em cliente-preferencia...");
 
-      const itens = clientePreferencias.data;
-      if (!itens || itens.length === 0) {
-        throw new Error("Nenhum item encontrado em cliente-preferencia para o cliente.");
-      }
+            const clientePreferenciasResponse = await axios.post(
+                `${API_BASE_URL}/cliente-preferencia/criteria`,
+                clientePreferenciaPayload
+            );
 
-      // Prepara o payload para adicionar todos os itens à tabela item-pedido
-      const itensPayload = itens.map((item) => ({
-        qtdProduto: 1, // Ajuste conforme necessário
-        cliente: { id: clienteId },
-        mesa: { id: item.cliente.mesa.id },
-        produto: { id: item.produto.id },
-        pedido: { id: pedido.id },
-      }));
+            const itens = clientePreferenciasResponse.data;
+            if (!itens || itens.length === 0) {
+                throw new Error("Nenhum item encontrado em cliente-preferencia para o cliente.");
+            }
 
-      console.log("Payload dos itens preparado como array:", JSON.stringify(itensPayload, null, 2));
+            // Prepara o payload dos itens para associar ao pedido
+            const itensPayload = itens.map((item) => ({
+                qtdProduto: 1,
+                cliente: { id: clienteId },
+                mesa: { id: item.cliente.mesa.id },
+                produto: { id: item.produto.id },
+                pedido: { id: pedidoId },
+            }));
 
-      // Adiciona os itens ao pedido
-      await PedidoModel.adicionarItensAoPedido(itensPayload);
-      console.log("Itens adicionados ao pedido com sucesso!");
+            console.log("Payload dos itens preparado como array:", JSON.stringify(itensPayload, null, 2));
 
-      // Atualizar status dos itens em cliente-preferencia
-      console.log("Atualizando status dos itens em cliente-preferencia...");
-      const updatePromises = itens.map((item) => {
-        const updatePayload = {
-          id: item.id, // ID do registro de cliente-preferencia
-          status: "EM_ABERTO",
-          cliente: { id: clienteId },
-          produto: { id: item.produto.id },
-        };
+            // Adiciona os itens ao pedido
+            await PedidoModel.adicionarItensAoPedido(itensPayload);
+            console.log("Itens adicionados ao pedido com sucesso!");
 
-        console.log("Payload do PUT para cliente-preferencia:", JSON.stringify(updatePayload, null, 2));
-        return axios.put("http://localhost:9091/api/v1/cliente-preferencia", updatePayload);
-      });
+            // Atualiza o status dos itens de cliente-preferencia para "EM_ABERTO"
+            const itensAtualizados = itens.map((item) => ({
+                id: item.id,
+                status: "EM_ABERTO",
+                cliente: { id: clienteId },
+                produto: { id: item.produto.id },
+            }));
 
-      await Promise.all(updatePromises);
-      console.log("Status dos itens atualizado com sucesso!");
+            console.log("Atualizando status dos itens para 'EM_ABERTO':", JSON.stringify(itensAtualizados, null, 2));
 
-      return { success: true, message: "Pedido finalizado e status atualizado com sucesso!" };
-    } catch (err) {
-      console.error("Erro no fluxo 'Estou Satisfeito':", err.response?.data || err.message || err);
-      throw new Error(err.response?.data?.mensagem || "Erro ao finalizar o pedido e atualizar os itens.");
-    }
-  },
+            for (const item of itensAtualizados) {
+                await axios.put(`${API_BASE_URL}/cliente-preferencia`, item);
+                console.log(`Status do item ${item.id} atualizado para EM_ABERTO.`);
+            }
+
+            // Exibe mensagem de sucesso
+            Swal.fire({
+                title: "Sucesso!",
+                text: "Pedido finalizado, itens atualizados e status ajustado com sucesso.",
+                icon: "success",
+                confirmButtonText: "OK",
+            });
+
+            return { success: true, message: "Pedido finalizado e itens ajustados com sucesso!" };
+        } catch (err) {
+            console.error("Erro no fluxo 'Estou Satisfeito':", err.response?.data || err.message || err);
+
+            // Exibe mensagem de erro
+            Swal.fire({
+                title: "Erro",
+                text: err.response?.data?.mensagem || "Erro ao finalizar o pedido e atualizar os itens.",
+                icon: "error",
+                confirmButtonText: "OK",
+            });
+
+            throw new Error(err.response?.data?.mensagem || "Erro ao finalizar o pedido e atualizar os itens.");
+        }
+    },
 };
 
 export default PreferenciasControllerPedido;
