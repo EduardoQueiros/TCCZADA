@@ -40,7 +40,7 @@ function AdicionalController(searchTerm) {
       
       // Realiza o POST na API
       const response = await axios.post(
-        "http://44.200.213.219:9091/api/v1/cliente-preferencia",
+        "http://52.202.23.63:9091/api/v1/cliente-preferencia",
         postData
       );
 
@@ -64,7 +64,7 @@ function AdicionalController(searchTerm) {
     const fetchAdicionais = async () => {
       setIsLoading(true);
       try {
-        const response = await axios.get("http://44.200.213.219:9091/api/v1/produto");
+        const response = await axios.get("http://52.202.23.63:9091/api/v1/produto");
         const adicionaisFiltrados = response.data.filter(
           (produto) =>
             produto.tipoProduto.descricao.toLowerCase() === "adicionais"

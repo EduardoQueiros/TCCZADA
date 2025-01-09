@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://44.200.213.219:9091/api/v1";
+const API_BASE_URL = "http://52.202.23.63:9091/api/v1";
 
 const PedidoModel = {
     criarPedido: async (payload) => {

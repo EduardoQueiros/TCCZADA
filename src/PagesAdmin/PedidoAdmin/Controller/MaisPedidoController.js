@@ -3,7 +3,7 @@ import axios from "axios";
 async function fetchMaisPedidos() {
   try {
     const response = await axios.get(
-      "http://44.200.213.219:9091/api/v1/cliente-preferencia/custom/mais-pedidos"
+      "http://52.202.23.63:9091/api/v1/cliente-preferencia/custom/mais-pedidos"
     );
 
     const produtosMapeados = response.data.map((item) => ({
