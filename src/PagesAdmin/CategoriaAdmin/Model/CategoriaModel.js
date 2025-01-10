@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://52.202.23.63:9091/api/v1/tipo-produto";
+const API_URL = "https://iycy90ubq9.execute-api.us-east-1.amazonaws.com/build/api/v1/tipo-produto";
 
 class CategoriaModel {
   static async fetchCategorias() {

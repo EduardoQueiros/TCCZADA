@@ -11,7 +11,7 @@ function PedidoPageAdminController(searchTerm) {
         setLoading(true);
         setError(false);
         try {
-            const response = await axios.get("http://52.202.23.63:9091/api/v1/cliente-preferencia");
+            const response = await axios.get("https://iycy90ubq9.execute-api.us-east-1.amazonaws.com/build/api/v1/cliente-preferencia");
 
             // Filtra os pedidos pelo status "RECEBIDO"
             const pedidosFiltrados = response.data.filter((pedido) => pedido.status === "RECEBIDO");

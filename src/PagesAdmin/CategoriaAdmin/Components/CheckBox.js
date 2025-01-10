@@ -23,7 +23,7 @@ function CheckBox({ categorias, onDelete }) {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete("http://52.202.23.63:9091/api/v1/tipo-produto", {
+          await axios.delete("https://iycy90ubq9.execute-api.us-east-1.amazonaws.com/build/api/v1/tipo-produto", {
             headers: {
               "Content-Type": "application/json",
             },

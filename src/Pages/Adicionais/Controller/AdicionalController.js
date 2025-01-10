@@ -40,7 +40,7 @@ function AdicionalController(searchTerm) {
       
       // Realiza o POST na API
       const response = await axios.post(
-        "http://52.202.23.63:9091/api/v1/cliente-preferencia",
+        "https://iycy90ubq9.execute-api.us-east-1.amazonaws.com/build/api/v1/cliente-preferencia",
         postData
       );
 
@@ -64,7 +64,7 @@ function AdicionalController(searchTerm) {
     const fetchAdicionais = async () => {
       setIsLoading(true);
       try {
-        const response = await axios.get("http://52.202.23.63:9091/api/v1/produto");
+        const response = await axios.get("https://iycy90ubq9.execute-api.us-east-1.amazonaws.com/build/api/v1/produto");
         const adicionaisFiltrados = response.data.filter(
           (produto) =>
             produto.tipoProduto.descricao.toLowerCase() === "adicionais"

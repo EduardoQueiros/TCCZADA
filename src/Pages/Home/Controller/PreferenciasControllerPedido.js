@@ -3,7 +3,7 @@ import axios from "axios";
 import { formatDateTime } from "../../../Components/DateUtils";
 import Swal from "sweetalert2";
 
-const API_BASE_URL = "http://52.202.23.63:9091/api/v1";
+const API_BASE_URL = "https://iycy90ubq9.execute-api.us-east-1.amazonaws.com/build/api/v1";
 
 const PreferenciasControllerPedido = {
     handleEstouSatisfeito: async (clienteId) => {
