@@ -2,7 +2,7 @@ function LoginAdminPage() {
 
     return (
         <div>
-            <div className="bg-orange-200 min-h-screen">
+            <div className="bg-gray-200 min-h-screen">
                 <section className="flex justify-center align-center">
                     <div className=" p-2 mt-36 ">
                         <div>
