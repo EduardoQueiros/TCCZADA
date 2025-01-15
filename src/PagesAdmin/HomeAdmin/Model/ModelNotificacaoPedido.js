@@ -2,7 +2,7 @@ import axios from "axios";
 import { format } from "date-fns"; // Importa a função de formatação do date-fns
 
 function ModelNotificacaoPedido() {
-    const baseURL = "https://iycy90ubq9.execute-api.us-east-1.amazonaws.com/build/api/v1";
+    const baseURL = "https://nova-api-l5ht.onrender.com/api/v1";
 
     const getPedidosNotificacao = async () => {
         const response = await axios.post(`${baseURL}/pedido/criteria`, { status: "NOTIFICA" });

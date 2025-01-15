@@ -23,7 +23,7 @@ function PreferenciasControllerProduto() {
     try {
       // Faz a requisição GET para a nova API
       const response = await fetch(
-        `https://iycy90ubq9.execute-api.us-east-1.amazonaws.com/build/api/v1/cliente-preferencia/custom/sem-adicionais/${clienteId.current}`,
+        `https://nova-api-l5ht.onrender.com/api/v1/cliente-preferencia/custom/sem-adicionais/${clienteId.current}`,
         {
           method: "GET",
           headers: {
@@ -89,7 +89,7 @@ function PreferenciasControllerProduto() {
       console.log("Corpo da requisição enviado para o PUT:", JSON.stringify(body, null, 2));
 
       // Faz a requisição PUT
-      const response = await fetch("https://iycy90ubq9.execute-api.us-east-1.amazonaws.com/build/api/v1/cliente-preferencia", {
+      const response = await fetch("https://nova-api-l5ht.onrender.com/api/v1/cliente-preferencia", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

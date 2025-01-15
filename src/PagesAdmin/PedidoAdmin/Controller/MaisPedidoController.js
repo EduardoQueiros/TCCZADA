@@ -3,7 +3,7 @@ import axios from "axios";
 async function fetchMaisPedidos() {
   try {
     const response = await axios.get(
-      "https://iycy90ubq9.execute-api.us-east-1.amazonaws.com/build/api/v1/cliente-preferencia/custom/mais-pedidos"
+      "https://nova-api-l5ht.onrender.com/api/v1/cliente-preferencia/custom/mais-pedidos"
     );
 
     const produtosMapeados = response.data.map((item) => ({

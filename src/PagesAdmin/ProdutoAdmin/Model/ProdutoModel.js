@@ -1,7 +1,7 @@
 import axios from "axios";
 import { formatarImagemBase64 } from "../../../utils/ImagemUtils";
 
-const API_URL = "https://iycy90ubq9.execute-api.us-east-1.amazonaws.com/build/api/v1/produto";
+const API_URL = "https://nova-api-l5ht.onrender.com/api/v1/produto";
 
 class ProdutoModel {
   // Buscar todos os produtos
@@ -33,7 +33,7 @@ class ProdutoModel {
   // Buscar categorias
   static async fetchCategorias() {
     try {
-      const response = await axios.get("https://iycy90ubq9.execute-api.us-east-1.amazonaws.com/build/api/v1/tipo-produto");
+      const response = await axios.get("https://nova-api-l5ht.onrender.com/api/v1/tipo-produto");
       return response.data;
     } catch (err) {
       throw new Error("Erro ao buscar categorias: " + err.message);
