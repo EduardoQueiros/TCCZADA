@@ -8,7 +8,6 @@ const API_BASE_URL = "https://nova-api-l5ht.onrender.com/api/v1";
 const PreferenciasControllerPedido = {
     handleEstouSatisfeito: async (clienteId) => {
         try {
-            console.log("Início do fluxo 'Estou Satisfeito'");
 
             if (!clienteId) {
                 throw new Error("ID do cliente não encontrado.");
@@ -23,7 +22,6 @@ const PreferenciasControllerPedido = {
             }
 
             // Obtém os detalhes do pedido para recuperar a dataHoraAbertura
-            console.log(`Buscando informações do pedido ${pedidoId}...`);
             const pedidoResponse = await axios.post(`${API_BASE_URL}/pedido/criteria`, { id: pedidoId });
             const pedido = pedidoResponse.data[0];
 
@@ -32,7 +30,6 @@ const PreferenciasControllerPedido = {
             }
 
             const dataHoraAbertura = pedido.dataHoraAbertura;
-            console.log("DataHoraAbertura obtida:", dataHoraAbertura);
 
             const dataHoraAtual = formatDateTime(new Date());
 
@@ -46,7 +43,6 @@ const PreferenciasControllerPedido = {
                 cliente: { id: clienteId },
             };
 
-            console.log("Payload do pedido para atualização:", JSON.stringify(pedidoPayload, null, 2));
 
             // Envia a requisição PUT para atualizar o pedido
             await axios.put(`${API_BASE_URL}/pedido`, pedidoPayload);
@@ -75,7 +71,6 @@ const PreferenciasControllerPedido = {
                 pedido: { id: pedidoId },
             }));
 
-            console.log("Payload dos itens preparado como array:", JSON.stringify(itensPayload, null, 2));
 
             // Adiciona os itens ao pedido
             await PedidoModel.adicionarItensAoPedido(itensPayload);
@@ -89,11 +84,9 @@ const PreferenciasControllerPedido = {
                 produto: { id: item.produto.id },
             }));
 
-            console.log("Atualizando status dos itens para 'EM_ABERTO':", JSON.stringify(itensAtualizados, null, 2));
 
             for (const item of itensAtualizados) {
                 await axios.put(`${API_BASE_URL}/cliente-preferencia`, item);
-                console.log(`Status do item ${item.id} atualizado para EM_ABERTO.`);
             }
 
             // Exibe mensagem de sucesso

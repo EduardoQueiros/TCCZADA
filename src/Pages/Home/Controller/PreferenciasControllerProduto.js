@@ -86,7 +86,6 @@ function PreferenciasControllerProduto() {
         },
       };
 
-      console.log("Corpo da requisição enviado para o PUT:", JSON.stringify(body, null, 2));
 
       // Faz a requisição PUT
       const response = await fetch("https://nova-api-l5ht.onrender.com/api/v1/cliente-preferencia", {

@@ -91,7 +91,6 @@ function PreferenciasControllerAdicionais() {
         },
       };
 
-      console.log("Corpo da requisição enviado para o PUT:", JSON.stringify(body, null, 2));
 
       // Faz a requisição PUT
       const response = await fetch("https://nova-api-l5ht.onrender.com/api/v1/cliente-preferencia", {
@@ -107,7 +106,6 @@ function PreferenciasControllerAdicionais() {
         throw new Error(`Erro ao atualizar produto: ${errorData.erros?.[0]?.mensagem || response.status}`);
       }
 
-      console.log("Produto atualizado com sucesso.");
 
       // Atualiza a página manualmente após o PUT
       await refreshPage();

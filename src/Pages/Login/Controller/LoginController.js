@@ -23,18 +23,16 @@ function LoginController() {
                 id: mesaId,
                 codigoMesa: String(mesaId),
             };
-            console.log("Verificando mesa com payload:", JSON.stringify(payload, null, 2));
+            
 
             const response = await axios.post("https://nova-api-l5ht.onrender.com/api/v1/mesa/criteria", payload);
 
             if (response.data && response.data.length > 0) {
-                console.log("Mesa encontrada:", response.data);
                 return true;
             } else {
                 throw new Error("Mesa não encontrada.");
             }
         } catch (error) {
-            console.error("Erro ao verificar mesa:", error);
             Swal.fire({
                 title: "Erro",
                 text: "A mesa não foi encontrada. Verifique o ID da mesa e tente novamente.",
@@ -55,19 +53,16 @@ function LoginController() {
                     cliente: { id: clienteId },
                 },
             ];
-            console.log("Criando pedido com payload:", JSON.stringify(pedidoPayload, null, 2));
 
             const response = await axios.post("https://nova-api-l5ht.onrender.com/api/v1/pedido", pedidoPayload);
 
             if (response.data && response.data.length > 0) {
                 const pedido = response.data[0];
-                console.log("Pedido criado com sucesso:", pedido);
                 return pedido.id;
             } else {
                 throw new Error("Erro ao criar o pedido.");
             }
         } catch (error) {
-            console.error("Erro ao criar pedido:", error);
             throw new Error("Erro ao criar pedido.");
         }
     };
@@ -75,19 +70,16 @@ function LoginController() {
     const buscarPedidoPorCliente = async (clienteId) => {
         try {
             const payload = { cliente: { id: clienteId } };
-            console.log("Buscando pedido com payload:", JSON.stringify(payload, null, 2));
 
             const response = await axios.post("https://nova-api-l5ht.onrender.com/api/v1/pedido/criteria", payload);
 
             if (response.data && response.data.length > 0) {
                 const pedido = response.data[0];
-                console.log("Pedido encontrado para o cliente:", pedido);
                 return pedido.id;
             } else {
                 throw new Error("Pedido não encontrado para o cliente.");
             }
         } catch (error) {
-            console.error("Erro ao buscar pedido:", error);
             throw new Error("Erro ao buscar pedido.");
         }
     };
@@ -108,7 +100,6 @@ function LoginController() {
                         },
                     },
                 ];
-                console.log("Enviando payload do cliente:", JSON.stringify(clientePayload, null, 2));
 
                 const clienteResponse = await axios.post("https://nova-api-l5ht.onrender.com/api/v1/cliente", clientePayload);
                 const clienteId = clienteResponse.data?.[0]?.id;
@@ -116,13 +107,11 @@ function LoginController() {
                 if (!clienteId) {
                     throw new Error("Erro ao obter o ID do cliente.");
                 }
-                console.log("Cliente criado com sucesso. ID:", clienteId);
 
                 let pedidoId;
                 try {
                     pedidoId = await criarPedido(clienteId);
                 } catch (error) {
-                    console.warn("Erro ao criar pedido diretamente. Tentando buscar pedido associado.");
                     pedidoId = await buscarPedidoPorCliente(clienteId);
                 }
 
@@ -130,7 +119,6 @@ function LoginController() {
                     throw new Error("Erro ao obter o ID do pedido.");
                 }
 
-                console.log("Pedido associado ao cliente. ID do pedido:", pedidoId);
 
                 const userLogin = { clienteId, pedidoId };
                 localStorage.setItem("userLogin", JSON.stringify(userLogin));
@@ -142,7 +130,6 @@ function LoginController() {
                     confirmButtonText: "OK",
                 }).then(() => navigate("/Preferencias"));
             } catch (error) {
-                console.error("Erro no fluxo de login:", error);
 
                 Swal.fire({
                     title: "Erro",

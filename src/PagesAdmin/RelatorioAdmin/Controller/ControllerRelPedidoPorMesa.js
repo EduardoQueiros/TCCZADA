@@ -17,7 +17,6 @@ function ControllerRelPedidoPorMesa(startDate, endDate, filtroAtivado) {
         const pedidos = await RelatorioModel.fetchPedidosByDateRange(startDate, endDate);
 
         if (pedidos.length === 0) {
-          // Alerta informando que nenhum pedido foi encontrado no intervalo
           Swal.fire({
             icon: "info",
             title: "Nenhum Pedido Encontrado",
@@ -25,49 +24,66 @@ function ControllerRelPedidoPorMesa(startDate, endDate, filtroAtivado) {
             confirmButtonText: "Ok",
           });
 
-          setPedidosFiltrados([]); // Define a lista de pedidos filtrados como vazia
-          return; // Sai da função para evitar processamento desnecessário
+          setPedidosFiltrados([]);
+          return;
         }
 
-        const pedidosAgrupados = [];
-        for (const pedido of pedidos) {
+        // Agrupar pedidos por mesa
+        const pedidosAgrupados = pedidos.reduce(async (accPromise, pedido) => {
+          const acc = await accPromise;
+
+          // Buscar itens do pedido
           const itensPedido = await RelatorioModel.fetchItemPedidos(pedido.id);
 
-          const produtosAgrupados = itensPedido.reduce((acc, item) => {
+          const produtosAgrupados = itensPedido.reduce((accProdutos, item) => {
             const produtoId = item.produto.id;
 
-            if (!acc[produtoId]) {
-              acc[produtoId] = {
+            if (!accProdutos[produtoId]) {
+              accProdutos[produtoId] = {
                 descricao: item.produto.descricao,
                 quantidade: 0,
               };
             }
 
-            acc[produtoId].quantidade += item.qtdProduto;
+            accProdutos[produtoId].quantidade += item.qtdProduto;
 
-            return acc;
+            return accProdutos;
           }, {});
 
-          pedidosAgrupados.push({
-            mesaId: pedido.cliente.mesa.id,
-            codigoMesa: pedido.cliente.mesa.codigoMesa,
-            totalProdutos: itensPedido.reduce((sum, item) => sum + item.qtdProduto, 0),
-            totalPedidos: 1,
-            pedidos: [
-              {
-                pedido,
-                produtosAgrupados: Object.values(produtosAgrupados),
-                totalProdutos: itensPedido.reduce((sum, item) => sum + item.qtdProduto, 0),
-              },
-            ],
-          });
-        }
+          // Verificar se a mesa já está no agrupamento
+          const mesaExistente = acc.find((mesa) => mesa.mesaId === pedido.cliente.mesa.id);
 
-        setPedidosFiltrados(pedidosAgrupados);
+          if (mesaExistente) {
+            mesaExistente.totalPedidos += 1;
+            mesaExistente.totalProdutos += itensPedido.reduce((sum, item) => sum + item.qtdProduto, 0);
+            mesaExistente.pedidos.push({
+              pedido,
+              produtosAgrupados: Object.values(produtosAgrupados),
+              totalProdutos: itensPedido.reduce((sum, item) => sum + item.qtdProduto, 0),
+            });
+          } else {
+            acc.push({
+              mesaId: pedido.cliente.mesa.id,
+              codigoMesa: pedido.cliente.mesa.codigoMesa,
+              totalProdutos: itensPedido.reduce((sum, item) => sum + item.qtdProduto, 0),
+              totalPedidos: 1,
+              pedidos: [
+                {
+                  pedido,
+                  produtosAgrupados: Object.values(produtosAgrupados),
+                  totalProdutos: itensPedido.reduce((sum, item) => sum + item.qtdProduto, 0),
+                },
+              ],
+            });
+          }
+
+          return acc;
+        }, Promise.resolve([]));
+
+        setPedidosFiltrados(await pedidosAgrupados);
       } catch (err) {
         setError(err);
 
-        // Exibe alerta de erro com detalhes
         Swal.fire({
           icon: "error",
           title: "Erro ao Carregar Pedidos",

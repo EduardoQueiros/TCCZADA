@@ -33,7 +33,7 @@ function BoxProduto({ produtos, onProductClick, onRemoveClick }) {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 p-4">
       {produtos.map((produto) => (
         <div
           key={produto.id}
@@ -65,10 +65,10 @@ function BoxProduto({ produtos, onProductClick, onRemoveClick }) {
             </p>
           </div>
 
-          <div className="flex justify-around items-center p-4 border-t border-blue-200 bg-blue-50">
+          <div className="flex justify-around items-center p-4 border-t border-blue-200 bg-blue-50 ">
             <button
               onClick={() => onProductClick(produto.id)}
-              className="flex items-center text-white bg-blue-600 hover:bg-blue-700 font-semibold py-2 px-4 rounded-lg transition-all"
+              className="flex items-center text-white bg-blue-600 hover:bg-blue-700 font-semibold py-2 px-4 rounded-lg transition-all mr-2"
             >
               <img
                 src="https://img.icons8.com/?size=100&id=56304&format=png&color=ffffff"

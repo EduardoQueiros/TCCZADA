@@ -1,22 +1,56 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import ViewNotificacaoPedido from "./ViewNotificacaoPedido";
 import Box from "../ComponentsHomeAdmin/Box";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faFileInvoice, faBox, faTag, faChartPie, faChair, faUtensils } from "@fortawesome/free-solid-svg-icons";
+import ControllerNotificacaoPedido from "../Controller/ControllerNotificacaoPedido";
 
 function HomeAdmin() {
     const [showModal, setShowModal] = useState(false);
+    const [notificacaoCount, setNotificacaoCount] = useState(0);
+    const controller = useMemo(() => ControllerNotificacaoPedido(), []);
+
+    // Atualiza a contagem de notificações periodicamente
+    useEffect(() => {
+        const atualizarNotificacoes = async () => {
+            try {
+                const pedidos = await controller.carregarNotificacoes(); // Agora retorna notificações corretamente
+
+                // Verifica se `pedidos` é uma lista válida
+                if (Array.isArray(pedidos)) {
+                    setNotificacaoCount(pedidos.length);
+                } else {
+                    setNotificacaoCount(0);
+                }
+            } catch (error) {
+                setNotificacaoCount(0); // Define o contador como 0 em caso de erro
+            }
+        };
+
+        // Chamada inicial
+        atualizarNotificacoes();
+
+        // Atualização periódica
+        const intervalId = setInterval(atualizarNotificacoes, 5000);
+
+        return () => clearInterval(intervalId); // Limpa o intervalo ao desmontar
+    }, [controller]);
 
     return (
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 min-h-screen flex flex-col items-center">
             {/* Cabeçalho */}
-            <header className="w-full py-6 bg-blue-600 text-white shadow-lg flex justify-between items-center px-6 text-center">
+            <header className="w-full bg-blue-600 text-white shadow-lg flex justify-between items-center p-6 relative">
                 <h1 className="text-4xl font-bold">Painel Administrativo</h1>
                 <button
-                    className="bg-white text-blue-600 p-4 rounded-full shadow-md hover:bg-blue-100 hover:scale-105 transition-transform duration-300"
+                    className="relative bg-white text-blue-600 p-4 rounded-full shadow-md hover:bg-blue-100 hover:scale-105 transition-transform duration-300"
                     onClick={() => setShowModal(true)}
                 >
                     <FontAwesomeIcon icon={faBell} className="w-6 h-6" />
+                    {notificacaoCount > 0 && (
+                        <span className="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex justify-center items-center">
+                            {notificacaoCount}
+                        </span>
+                    )}
                 </button>
             </header>
 

@@ -26,7 +26,6 @@ function SaborBoxController(searchTerm) {
       );
       return response.data.map((item) => item.produto.id);
     } catch (err) {
-      console.error("Erro ao buscar produtos adicionados:", err);
       return [];
     }
   };
@@ -62,7 +61,6 @@ function SaborBoxController(searchTerm) {
 
       navigate("/Preferencias");
     } catch (err) {
-      console.error("Erro ao adicionar produto:", err);
       Swal.fire({
         title: "Erro",
         text: "Erro ao adicionar o produto. Tente novamente.",

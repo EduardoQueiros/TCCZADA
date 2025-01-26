@@ -166,12 +166,12 @@ function Preferencias() {
       </section>
 
       {/* Adicionais */}
-      <section className="mt-16 px-6">
+      <section className="mt-16 px-6 justify-center text-center">
         <h2 className="text-2xl font-semibold text-center text-gray-700 mb-6">Adicionais</h2>
         {loadingAdicionais && <p>Carregando adicionais...</p>}
         {errorAdicionais && <p className="text-red-500">Erro ao carregar adicionais.</p>}
 
-        <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+        <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {adicionais.map((adicional, index) => (
             <ItemBoxAdicional
               key={index}
