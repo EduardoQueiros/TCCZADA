@@ -7,7 +7,6 @@ function ControllerNotificacaoPedido() {
         try {
             const pedidos = await model.getPedidosNotificacao();
 
-            // Verifica se pedidos foi retornado como um array
             if (!Array.isArray(pedidos)) {
                 console.warn("Resposta inesperada ao buscar notificações:", pedidos);
                 return [];
@@ -17,9 +16,27 @@ function ControllerNotificacaoPedido() {
                 pedidos.map(async (pedido) => {
                     try {
                         const itens = await model.getItensPedido(pedido.id);
+
+                        // Agrupa itens pelo produto para consolidar duplicados
+                        const itensAgrupados = itens.reduce((acc, item) => {
+                            const produtoId = item.produto.id;
+
+                            if (!acc[produtoId]) {
+                                acc[produtoId] = {
+                                    id: produtoId,
+                                    descricao: item.produto.descricao,
+                                    qtdProduto: 0,
+                                };
+                            }
+
+                            acc[produtoId].qtdProduto += item.qtdProduto;
+
+                            return acc;
+                        }, {});
+
                         return {
                             ...pedido,
-                            itens,
+                            itens: Object.values(itensAgrupados), // Converte o agrupamento para uma lista
                         };
                     } catch (error) {
                         console.error(`Erro ao buscar itens para o pedido ${pedido.id}:`, error.message);
@@ -29,13 +46,13 @@ function ControllerNotificacaoPedido() {
             );
 
             if (setNotificacoes) {
-                setNotificacoes(notificacoes); // Atualiza o estado no componente, se fornecido
+                setNotificacoes(notificacoes);
             }
 
-            return notificacoes; // Retorna as notificações para uso adicional
+            return notificacoes;
         } catch (error) {
             console.error("Erro ao carregar notificações:", error.message);
-            return []; // Retorna uma lista vazia em caso de erro
+            return [];
         }
     };
 
@@ -48,7 +65,7 @@ function ControllerNotificacaoPedido() {
             await model.atualizarStatusPedido(pedido);
 
             if (atualizarLista) {
-                atualizarLista(); // Atualiza a lista de notificações, se callback fornecido
+                atualizarLista();
             }
 
             console.log(`Pedido ${pedido.id} confirmado com sucesso.`);

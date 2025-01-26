@@ -28,7 +28,7 @@ function ViewNotificacaoPedido() {
             Swal.fire({
                 icon: "error",
                 title: "Erro",
-                text: "Pedido incompleto! Verifique os dados antes de continuar."
+                text: "Pedido incompleto! Verifique os dados antes de continuar.",
             });
             return;
         }
@@ -40,7 +40,7 @@ function ViewNotificacaoPedido() {
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",
-            confirmButtonText: "Sim, confirmar!"
+            confirmButtonText: "Sim, confirmar!",
         }).then((result) => {
             if (result.isConfirmed) {
                 controller.confirmarPedido(pedido, () => {
@@ -79,7 +79,7 @@ function ViewNotificacaoPedido() {
                                 <strong>Itens Consumidos:</strong>
                                 {notificacao.itens.map((item) => (
                                     <li key={item.id} className="ml-4 list-disc">
-                                        {item.produto.descricao} - {item.qtdProduto}x
+                                        {item.descricao} - {item.qtdProduto}x
                                     </li>
                                 ))}
                             </ul>
