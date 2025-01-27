@@ -3,7 +3,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 
-function SaborBoxController(searchTerm) {
+function SaborBoxController(searchTerm, selectedTipo) {
   const [produtos, setProdutos] = useState([]);
   const [filteredProdutos, setFilteredProdutos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -33,7 +33,6 @@ function SaborBoxController(searchTerm) {
   const adicionarProduto = async (produto) => {
     try {
       const clienteId = getClienteId();
-
       if (!clienteId) {
         throw new Error("ID do cliente não encontrado. Realize o login novamente.");
       }
@@ -58,7 +57,6 @@ function SaborBoxController(searchTerm) {
       setFilteredProdutos((prevFiltrados) =>
         prevFiltrados.filter((filtrado) => filtrado.id !== produto.id)
       );
-
       navigate("/Preferencias");
     } catch (err) {
       Swal.fire({
@@ -70,21 +68,42 @@ function SaborBoxController(searchTerm) {
     }
   };
 
+  // Efeito para buscar produtos ao montar e sempre que "selectedTipo" mudar
   useEffect(() => {
     const fetchProdutos = async () => {
       setIsLoading(true);
       try {
         const clienteId = getClienteId();
-
         if (!clienteId) {
           throw new Error("ID do cliente não encontrado. Realize o login novamente.");
         }
 
+        // Buscamos os produtos já adicionados
         const produtosJaAdicionadosIds = await fetchProdutosJaAdicionados(clienteId);
 
-        const response = await axios.get("https://nova-api-l5ht.onrender.com/api/v1/produto");
+        // Se houver selectedTipo, usamos POST /produto/criteria
+        let fetched;
+        if (selectedTipo) {
+          const requestBody = {
+            tipoProduto: {
+              descricao: selectedTipo,
+            },
+          };
+          const response = await axios.post(
+            "https://nova-api-l5ht.onrender.com/api/v1/produto/criteria",
+            requestBody
+          );
+          fetched = response.data;
+        } else {
+          // Se não houver selectedTipo, traz todos (GET)
+          const response = await axios.get(
+            "https://nova-api-l5ht.onrender.com/api/v1/produto"
+          );
+          fetched = response.data;
+        }
 
-        const produtosFiltrados = response.data.filter(
+        // Remove produtos "adicionais" (caso venham) e que já estejam adicionados
+        const produtosFiltrados = fetched.filter(
           (produto) =>
             produto.tipoProduto.descricao.toLowerCase() !== "adicionais" &&
             !produtosJaAdicionadosIds.includes(produto.id)
@@ -106,15 +125,18 @@ function SaborBoxController(searchTerm) {
     };
 
     fetchProdutos();
-  }, []);
+  }, [selectedTipo]);
 
+  // Efeito para filtrar pelo searchTerm
   useEffect(() => {
-    const filtrados = produtos.filter(
-      (produto) =>
-        !searchTerm ||
+    if (!searchTerm) {
+      setFilteredProdutos(produtos);
+    } else {
+      const resultado = produtos.filter((produto) =>
         produto.descricao.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFilteredProdutos(filtrados);
+      );
+      setFilteredProdutos(resultado);
+    }
   }, [searchTerm, produtos]);
 
   return { produtos: filteredProdutos, isLoading, error, adicionarProduto };

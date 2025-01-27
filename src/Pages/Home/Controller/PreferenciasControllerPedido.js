@@ -92,12 +92,12 @@ const PreferenciasControllerPedido = {
             // Exibe mensagem de sucesso
             Swal.fire({
                 title: "Sucesso!",
-                text: "Pedido finalizado, itens atualizados e status ajustado com sucesso.",
+                text: "Pedido finalizado.",
                 icon: "success",
                 confirmButtonText: "OK",
             });
 
-            return { success: true, message: "Pedido finalizado e itens ajustados com sucesso!" };
+            return { success: true, message: "Pedido finalizado!" };
         } catch (err) {
             console.error("Erro no fluxo 'Estou Satisfeito':", err.response?.data || err.message || err);
 

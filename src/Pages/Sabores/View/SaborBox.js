@@ -1,7 +1,8 @@
 import SaborBoxController from "../Controller/SaborBoxController";
 
-function SaborBox({ searchTerm }) {
-  const { produtos, isLoading, error, adicionarProduto } = SaborBoxController(searchTerm);
+function SaborBox({ searchTerm, selectedTipo }) {
+  // Observe que agora o controller recebe duas variáveis!
+  const { produtos, isLoading, error, adicionarProduto } = SaborBoxController(searchTerm, selectedTipo);
 
   if (isLoading) {
     return <div className="text-center text-lg text-gray-600">Carregando produtos...</div>;
@@ -23,18 +24,21 @@ function SaborBox({ searchTerm }) {
           className="relative group cursor-pointer rounded-lg overflow-hidden shadow-lg"
           onClick={() => adicionarProduto(produto)}
         >
-          {/* Imagem do Produto */}
           <img
             src={`data:image/png;base64,${produto.imagem}`}
             alt={produto.descricao}
             className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
           />
-
-          {/* Sobreposição com informações */}
           <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4">
-            <h3 className="text-white text-lg font-bold truncate">{produto.descricao}</h3>
-            <p className="text-orange-400 font-semibold mt-1">R${produto.valor.toFixed(2)}</p>
-            <p className="text-gray-300 text-sm">{produto.tipoProduto.descricao}</p>
+            <h3 className="text-white text-lg font-bold truncate">
+              {produto.descricao}
+            </h3>
+            <p className="text-orange-400 font-semibold mt-1">
+              R${produto.valor.toFixed(2)}
+            </p>
+            <p className="text-gray-300 text-sm">
+              {produto.tipoProduto.descricao}
+            </p>
           </div>
         </div>
       ))}
